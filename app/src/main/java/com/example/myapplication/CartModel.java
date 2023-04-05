@@ -42,4 +42,12 @@ public class CartModel {
     public String getSeller(){
         return this.seller;
     }
+
+    public int getQuantity(){
+        return this.quantity;
+    }
+
+    public void setQuantity(int quantity){
+        this.quantity = quantity;
+    }
 }

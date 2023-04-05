@@ -17,8 +17,8 @@
 
         <ImageView
             android:id="@+id/productImage"
-            android:layout_width="111dp"
-            android:layout_height="85dp"
+            android:layout_width="116dp"
+            android:layout_height="112dp"
             android:padding="5dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -28,16 +28,14 @@
             android:id="@+id/productName"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="19dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginEnd="16dp"
             android:layout_toEndOf="@+id/productImage"
             android:text="Product name"
             android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/store"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/productImage"
             app:layout_constraintTop_toTopOf="parent" />
@@ -47,28 +45,100 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/productName"
-            android:layout_marginStart="11dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginStart="19dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginEnd="171dp"
             android:layout_toEndOf="@+id/productImage"
             android:text="Store Name"
             android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/productImage"
             app:layout_constraintTop_toBottomOf="@+id/productName" />
+
+        <ImageView
+            android:id="@+id/plus"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="32dp"
+            android:src="@drawable/plus"
+            app:layout_constraintEnd_toStartOf="@+id/minus"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/minus"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/minus"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/qty"
+            android:layout_width="28dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="5dp"
+            android:gravity="center"
+            android:text="0"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toStartOf="@+id/minus"
+            app:layout_constraintStart_toEndOf="@+id/plus"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/cost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="31dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginStart="116dp"
+            android:layout_marginTop="21dp"
+            android:layout_marginEnd="17dp"
             android:layout_toEndOf="@+id/productName"
             android:text="Cost"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/store"
+            app:layout_constraintTop_toBottomOf="@+id/productName" />
+
+        <TextView
+            android:id="@+id/priceComp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="44dp"
+            android:layout_marginBottom="21dp"
+            android:text="View other buying options"
+            android:textAppearance="@style/Widget.AppCompat.Spinner.Underlined"
+            android:textColor="#1696CF"
+            android:textSize="15dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/cost"
+            app:layout_constraintHorizontal_bias="0.555"
+            app:layout_constraintStart_toEndOf="@+id/productImage"
+            app:layout_constraintTop_toBottomOf="@+id/store"
+            app:layout_constraintVertical_bias="0.166" />
+
+        <ImageView
+            android:id="@+id/check_box"
+            android:layout_width="38dp"
+            android:layout_height="32dp"
+            android:visibility="gone"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="17dp"
+            android:layout_marginBottom="5dp"
+            android:src="@drawable/baseline_check_circle_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cost" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

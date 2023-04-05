@@ -40,9 +40,27 @@ public class DataController
         dbHelper.close();
     }
 
+    public long updateCart(String barcode, String productName, String cost, int quantity, String seller, String url,
+                       String imageUrl, int newQty){
+        db = dbHelper.getWritableDatabase();
+        ContentValues content=new ContentValues();
+        content.put("barcode", barcode);
+        content.put("productName",productName);
+        content.put("cost",cost);
+        content.put("quantity", newQty);
+        content.put("seller",seller);
+        content.put("url", url);
+        content.put("imageUrl",imageUrl);
+        db.update("cart",content,"barcode=?",new String[]{String.valueOf(barcode)});
+        return 0;
+    }
     public long insertCart(String barcode, String productName, String cost, int quantity, String seller, String url,
                            String imageUrl){
         db = dbHelper.getWritableDatabase();
+//        db.execSQL("DROP TABLE IF EXISTS cart");
+//        db.execSQL("create table cart(barcode text primary key, productName text not null," +
+//                "cost real not null, quantity integer not null, seller text not null, " +
+//                "url text not null, imageUrl text not null);");
         Log.d("TAG", "insert: coming here in insert db "+barcode);
         ContentValues content=new ContentValues();
         content.put("barcode", barcode);
@@ -53,12 +71,27 @@ public class DataController
         content.put("url", url);
         content.put("imageUrl",imageUrl);
         long res = 0;
-        try {
-            res = db.insertOrThrow("cart", null, content);
-        }catch (SQLiteConstraintException e){
-            Log.e("TAG", "insert: error in db");
-            res = -1;
-            e.printStackTrace();
+        Cursor c = db.rawQuery("select * from cart where barcode="+barcode, null);
+        if(c!=null && c.getCount()>0){
+            c.moveToNext();
+            quantity = Integer.parseInt(c.getString(3).toString())+quantity;
+            //db.rawQuery("update cart set quantity="+quantity+" where barcode="+barcode, null);
+            db.update("cart",content,"barcode=?",new String[]{barcode});
+            c = db.rawQuery("select * from cart where barcode="+barcode, null);
+            while(c.moveToNext()){
+                Log.d("TAG", "insertCart: "+c.getString(0)+" "+c.getString(1)+" "
+                        +c.getString(2)+" "+c.getString(3)+" "+c.getString(4)+ " "
+                        +c.getString(5)+" "+c.getString(6));
+            }
+        }
+        else {
+            try {
+                res = db.insertOrThrow("cart", null, content);
+            } catch (SQLiteConstraintException e) {
+                Log.e("TAG", "insert: error in db");
+                res = -1;
+                e.printStackTrace();
+            }
         }
         return res;
     }
@@ -127,6 +160,7 @@ public class DataController
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             // TODO Auto-generated method stub
             db.execSQL("DROP TABLE IF EXISTS favorites");
+            db.execSQL("DROP TABLE IF EXISTS cart");
             onCreate(db);
         }
 

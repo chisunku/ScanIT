@@ -41,6 +41,32 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.handler> {
         holder.courseNameTV.setText(model.getStoreName());
         holder.courseRatingTV.setText("" + model.getCost());
 //        holder.courseIV.setImageResource(model.getCourse_image());
+        holder.plus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int qty = model.getQuantity()+1;
+                if(qty>15)
+                    Toast.makeText(context.getApplicationContext(), "Too many items added", Toast.LENGTH_LONG).show();
+                else {
+                    model.setQuantity(qty);
+                    holder.quantity.setText(qty+"");
+                }
+            }
+        });
+        holder.minus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int qty = model.getQuantity();
+                if(qty != 0){
+                    qty-=1;
+                    model.setQuantity(qty);
+                    holder.quantity.setText(qty+"");
+                }
+                else{
+                    Toast.makeText(context.getApplicationContext(), "No items added", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
         holder.cart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,7 +74,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.handler> {
                 Toast.makeText(context.getApplicationContext(), "adding to cart", Toast.LENGTH_LONG).show();
                 DataController db = new DataController(context.getApplicationContext());
                 //qty;
-                int qty = 0;
+                int qty = Integer.parseInt(holder.quantity.getText().toString());
                 long r = db.insertCart(model.getBarcode(), model.getProductName(), model.getCost(), qty, model.getStoreName(), model.getUrl(), model.getImageUrl());
                 if(r == -1){
                     Toast.makeText(context.getApplicationContext(), "Something went wrong :( please try again!!", Toast.LENGTH_LONG).show();
@@ -66,6 +92,12 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.handler> {
                 context.startActivity(i);
             }
         });
+//        holder.priceComp.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                new ProductDetails(context).equals()
+//            }
+//        });
     }
 
     @Override
@@ -81,15 +113,22 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.handler> {
         private final TextView courseNameTV;
         private final TextView courseRatingTV;
         private final ImageView cart;
+        private final TextView quantity;
         private CardView cardView;
+        private final ImageView plus;
+        private final ImageView minus;
+//        private final TextView priceComp;
 
         public handler(View itemView) {
             super(itemView);
-//            courseIV = itemView.findViewById(R.id.idIVCourseImage);
             courseNameTV = itemView.findViewById(R.id.storeName);
             courseRatingTV = itemView.findViewById(R.id.cost);
             cardView = itemView.findViewById(R.id.base_cardview);
             cart = itemView.findViewById(R.id.cart);
+            plus = itemView.findViewById(R.id.plus);
+            minus = itemView.findViewById(R.id.minus);
+            quantity = itemView.findViewById(R.id.qty);
+//            priceComp = itemView.findViewById(R.id.priceComp);
         }
     }
 }

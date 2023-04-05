@@ -8,6 +8,7 @@ public class CourseModel {
     private String productName;
     private String ImageUrl;
     private String barcode;
+    private int quantity;
 
     // Constructor
     public CourseModel(String barcode, String storeName, String cost, String url, String productName, String ImageUrl) {
@@ -24,6 +25,13 @@ public class CourseModel {
         this.url = url;
     }
 
+    public int getQuantity(){
+        return quantity;
+    }
+
+    public void setQuantity(int qty){
+        this.quantity = qty;
+    }
     public String getBarcode(){
         return this.barcode;
     }

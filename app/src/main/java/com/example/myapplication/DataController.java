@@ -40,6 +40,20 @@ public class DataController
         dbHelper.close();
     }
 
+    public void deleteCart(String barcode){
+        db = dbHelper.getWritableDatabase();
+        db.delete("cart", "barcode=?",new String[]{barcode});
+        cart cartObj = new cart();
+        cartObj.updateTotal(context);
+        db.close();
+    }
+
+    public void deleteFav(String barcode){
+        db = dbHelper.getWritableDatabase();
+        db.delete("favorite", "barcode=?",new String[]{barcode});
+        db.close();
+    }
+
     public long updateCart(String barcode, String productName, String cost, int quantity, String seller, String url,
                        String imageUrl, int newQty){
         db = dbHelper.getWritableDatabase();
@@ -55,7 +69,7 @@ public class DataController
         return 0;
     }
     public long insertCart(String barcode, String productName, String cost, int quantity, String seller, String url,
-                           String imageUrl){
+                           String imageUrl, String from){
         db = dbHelper.getWritableDatabase();
 //        db.execSQL("DROP TABLE IF EXISTS cart");
 //        db.execSQL("create table cart(barcode text primary key, productName text not null," +
@@ -92,6 +106,10 @@ public class DataController
                 res = -1;
                 e.printStackTrace();
             }
+        }
+        if(from.equals("undo")) {
+            cart cartObj = new cart();
+            cartObj.updateTotal(context);
         }
         return res;
     }

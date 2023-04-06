@@ -38,6 +38,7 @@
         <activity android:name=".Product"/>
         <activity android:name=".Favorite"/>
         <activity android:name=".cart"/>
+        <activity android:name=".matUI"/>
     </application>
 
 </manifest>

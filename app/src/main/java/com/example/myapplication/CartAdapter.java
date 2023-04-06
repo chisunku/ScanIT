@@ -1,6 +1,8 @@
 package com.example.myapplication;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +30,8 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -65,9 +70,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.carthandler> {
         holder.productName.setText(model.getProductName());
         holder.store.setText(model.getSeller());
         holder.cost.setText(model.getCost()+"");
+        holder.quantity.setText(model.getQuantity()+"");
         Log.d("TAG", "onBindViewHolder: qty : "+model.getQuantity());
 //        holder.quantity.setText(qty+"");
-//        holder.quantity.setText(model.getQuantity());
         Log.d("TAG", "onBindViewHolder: image url : "+model.getImageUrl());
         try {
             new CartAdapter.DownloadImageTask(holder.productImage).execute(model.getImageUrl()).get();
@@ -76,13 +81,17 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.carthandler> {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.clickableLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
-                    Intent i = new Intent(Intent.ACTION_VIEW);
-                    i.setData(Uri.parse(model.getUrl()));
-                    context.startActivity(i);
+                    if(model.getUrl()==null)
+                        Toast.makeText(context, "Something went wrong, please try again later!!",Toast.LENGTH_LONG).show();
+                    else {
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse(model.getUrl()));
+                        context.startActivity(i);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -115,7 +124,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.carthandler> {
                     db.updateCart(model.getBarcode(), model.getProductName(), model.getCost(),
                             model.getQuantity(), model.getSeller(), model.getUrl(), model.getImageUrl(), qty);
 //                    cartObj.total.setText(qty+"");
-//                    cartObj.updateTotal(context);
+                    cartObj.updateTotal(context);
                     notifyDataSetChanged();
                 }
             }
@@ -129,7 +138,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.carthandler> {
                     qty-=1;
                     model.setQuantity(qty);
                     holder.quantity.setText(qty+"");
-//                    cartObj.updateTotal(context);
+                    cartObj.updateTotal(context);
                     DataController db = new DataController(context);
                     db.updateCart(model.getBarcode(), model.getProductName(), model.getCost(),
                             model.getQuantity(), model.getSeller(), model.getUrl(), model.getImageUrl(), qty);
@@ -138,6 +147,29 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.carthandler> {
                 else{
                     Toast.makeText(context.getApplicationContext(), "No items added", Toast.LENGTH_LONG).show();
                 }
+            }
+        });
+
+        holder.delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage("Are you sure you want to delete "+model.getProductName()+" from the cart?");
+                builder.setTitle("DELETE");
+                builder.setCancelable(false);
+                builder.setPositiveButton("Yes", (dialog, which) -> {
+                    DataController db = new DataController(context);
+                    db.deleteCart(model.getBarcode());
+                    Toast.makeText(context, "Item "+model.getProductName()+" deleted!!",Toast.LENGTH_LONG).show();
+                    cartModelArrayList.remove(position);
+                    notifyDataSetChanged();
+                });
+                builder.setNegativeButton("No", (dialog, which) -> {
+                    dialog.cancel();
+                });
+
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
             }
         });
 
@@ -157,163 +189,164 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.carthandler> {
 //
 //        });
 
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                // check condition
-                if (!isEnable)
-                {
-                    // when action mode is not enable
-                    // initialize action mode
-                    ActionMode.Callback callback=new ActionMode.Callback() {
-                        @Override
-                        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                            // initialize menu inflater
-                            MenuInflater menuInflater= mode.getMenuInflater();
-                            // inflate menu
-                            menuInflater.inflate(R.menu.menu,menu);
-                            // return true
-                            return true;
-                        }
-
-                        @Override
-                        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                            // when action mode is prepare
-                            // set isEnable true
-                            isEnable=true;
-                            // create method
-                            ClickItem(holder);
-                            // set observer on getText method
-                            mainViewModel.getText().observe((LifecycleOwner) context
-                                    , new Observer<String>() {
-                                        @Override
-                                        public void onChanged(String s) {
-                                            // when text change
-                                            // set text on action mode title
-                                            mode.setTitle(String.format("%s Selected",s));
-                                        }
-                                    });
-                            // return true
-                            return true;
-                        }
-
-                        @Override
-                        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                            // when click on action mode item
-                            // get item  id
-                            int id=item.getItemId();
-                            // use switch condition
-                            switch(id)
-                            {
-                                case R.id.menu_delete:
-                                    // when click on delete
-                                    // use for loop
-                                    for(CartModel s:selectList)
-                                    {
-                                        // remove selected item list
-                                        cartModelArrayList.remove(s);
-                                    }
-                                    // check condition
-                                    if(cartModelArrayList.size()==0)
-                                    {
-                                        // when array list is empty
-                                        // visible text view
-//                                        tvEmpty.setVisibility(View.VISIBLE);
-                                    }
-                                    // finish action mode
-                                    mode.finish();
-                                    break;
-
-                                case R.id.menu_select_all:
-                                    // when click on select all
-                                    // check condition
-                                    if(selectList.size()==cartModelArrayList.size())
-                                    {
-                                        // when all item selected
-                                        // set isselectall false
-                                        isSelectAll=false;
-                                        // create select array list
-                                        selectList.clear();
-                                    }
-                                    else
-                                    {
-                                        // when  all item unselected
-                                        // set isSelectALL true
-                                        isSelectAll=true;
-                                        // clear select array list
-                                        selectList.clear();
-                                        // add value in select array list
-                                        selectList.addAll(cartModelArrayList);
-                                    }
-                                    // set text on view model
-                                    mainViewModel.setText(String .valueOf(selectList.size()));
-                                    // notify adapter
-                                    notifyDataSetChanged();
-                                    break;
-                            }
-                            // return true
-                            return true;
-                        }
-
-                        @Override
-                        public void onDestroyActionMode(ActionMode mode) {
-                            // when action mode is destroy
-                            // set isEnable false
-                            isEnable=false;
-                            // set isSelectAll false
-                            isSelectAll=false;
-                            // clear select array list
-                            selectList.clear();
-                            // notify adapter
-                            notifyDataSetChanged();
-                        }
-                    };
-                    // start action mode
-                    ((AppCompatActivity) v.getContext()).startActionMode(callback);
-                }
-                else
-                {
-                    // when action mode is already enable
-                    // call method
-                    ClickItem(holder);
-                }
-                // return true
-                return true;
-            }
-        });
+//        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View v) {
+//                // check condition
+//                if (!isEnable)
+//                {
+//                    // when action mode is not enable
+//                    // initialize action mode
+//                    ActionMode.Callback callback=new ActionMode.Callback() {
+//                        @Override
+//                        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+//                            // initialize menu inflater
+//                            MenuInflater menuInflater= mode.getMenuInflater();
+//                            // inflate menu
+//                            menuInflater.inflate(R.menu.menu,menu);
+//                            // return true
+//                            return true;
+//                        }
+//
+//                        @Override
+//                        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+//                            // when action mode is prepare
+//                            // set isEnable true
+//                            isEnable=true;
+//                            // create method
+//                            ClickItem(holder);
+//                            // set observer on getText method
+//                            mainViewModel.getText().observe((LifecycleOwner) context
+//                                    , new Observer<String>() {
+//                                        @Override
+//                                        public void onChanged(String s) {
+//                                            // when text change
+//                                            // set text on action mode title
+//                                            mode.setTitle(String.format("%s Selected",s));
+//                                        }
+//                                    });
+//                            // return true
+//                            return true;
+//                        }
+//
+//                        @Override
+//                        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+//                            // when click on action mode item
+//                            // get item  id
+//                            int id=item.getItemId();
+//                            // use switch condition
+//                            switch(id)
+//                            {
+//                                case R.id.menu_delete:
+//                                    // when click on delete
+//                                    // use for loop
+//                                    for(CartModel s:selectList)
+//                                    {
+//                                        // remove selected item list
+//                                        cartModelArrayList.remove(s);
+//
+//                                    }
+//                                    // check condition
+//                                    if(cartModelArrayList.size()==0)
+//                                    {
+//                                        // when array list is empty
+//                                        // visible text view
+////                                        tvEmpty.setVisibility(View.VISIBLE);
+//                                    }
+//                                    // finish action mode
+//                                    mode.finish();
+//                                    break;
+//
+//                                case R.id.menu_select_all:
+//                                    // when click on select all
+//                                    // check condition
+//                                    if(selectList.size()==cartModelArrayList.size())
+//                                    {
+//                                        // when all item selected
+//                                        // set isselectall false
+//                                        isSelectAll=false;
+//                                        // create select array list
+//                                        selectList.clear();
+//                                    }
+//                                    else
+//                                    {
+//                                        // when  all item unselected
+//                                        // set isSelectALL true
+//                                        isSelectAll=true;
+//                                        // clear select array list
+//                                        selectList.clear();
+//                                        // add value in select array list
+//                                        selectList.addAll(cartModelArrayList);
+//                                    }
+//                                    // set text on view model
+//                                    mainViewModel.setText(String .valueOf(selectList.size()));
+//                                    // notify adapter
+//                                    notifyDataSetChanged();
+//                                    break;
+//                            }
+//                            // return true
+//                            return true;
+//                        }
+//
+//                        @Override
+//                        public void onDestroyActionMode(ActionMode mode) {
+//                            // when action mode is destroy
+//                            // set isEnable false
+//                            isEnable=false;
+//                            // set isSelectAll false
+//                            isSelectAll=false;
+//                            // clear select array list
+//                            selectList.clear();
+//                            // notify adapter
+//                            notifyDataSetChanged();
+//                        }
+//                    };
+//                    // start action mode
+//                    ((AppCompatActivity) v.getContext()).startActionMode(callback);
+//                }
+//                else
+//                {
+//                    // when action mode is already enable
+//                    // call method
+//                    ClickItem(holder);
+//                }
+//                // return true
+//                return true;
+//            }
+//        });
 
 
     }
 
-    private void ClickItem(CartAdapter.carthandler holder) {
-
-        // get selected item value
-        CartModel s=cartModelArrayList.get(holder.getAdapterPosition());
-        // check condition
-        if(holder.checkbox.getVisibility()==View.GONE)
-        {
-            // when item not selected
-            // visible check box image
-            holder.checkbox.setVisibility(View.VISIBLE);
-            // set background color
-            holder.itemView.setBackgroundColor(Color.LTGRAY);
-            // add value in select array list
-            selectList.add(s);
-        }
-        else
-        {
-            // when item selected
-            // hide check box image
-            holder.checkbox.setVisibility(View.GONE);
-            // set background color
-            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
-            // remove value from select arrayList
-            selectList.remove(s);
-
-        }
-        // set text on view model
+//    private void ClickItem(CartAdapter.carthandler holder) {
+//
+//        // get selected item value
+//        CartModel s=cartModelArrayList.get(holder.getAdapterPosition());
+//        // check condition
+//        if(holder.checkbox.getVisibility()==View.GONE)
+//        {
+//            // when item not selected
+//            // visible check box image
+//            holder.checkbox.setVisibility(View.VISIBLE);
+//            // set background color
+//            holder.itemView.setBackgroundColor(Color.GRAY);
+//            // add value in select array list
+//            selectList.add(s);
+//        }
+//        else
+//        {
+//            // when item selected
+//            // hide check box image
+//            holder.checkbox.setVisibility(View.GONE);
+//            // set background color
+//            holder.itemView.setBackgroundColor(Color.WHITE);
+//            // remove value from select arrayList
+//            selectList.remove(s);
+//
+//        }
+//        // set text on view model
 //        mainViewModel.setText(String.valueOf(selectList.size()));
-    }
+//    }
 
     @Override
     public int getItemCount() {
@@ -329,25 +362,29 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.carthandler> {
         private final TextView productName;
         private final TextView store;
         private final TextView cost;
-        private CardView cardView;
+//        private CardView cardView;
         private final TextView priceComp;
         private final ImageView plus;
         private final ImageView minus;
         private final TextView quantity;
-        private final ImageView checkbox;
+        private final ImageView delete;
+        private final LinearLayout clickableLayout;
+//        private final ImageView checkbox;
 
         public carthandler(View itemView) {
             super(itemView);
             productName = itemView.findViewById(R.id.productName);
             store = itemView.findViewById(R.id.store);
-            cardView = itemView.findViewById(R.id.base_cardview);
+//            cardView = itemView.findViewById(R.id.base_cardview);
             cost = itemView.findViewById(R.id.cost);
             productImage = itemView.findViewById(R.id.productImage);
             priceComp = itemView.findViewById(R.id.priceComp);
             plus = itemView.findViewById(R.id.plus);
             minus = itemView.findViewById(R.id.minus);
             quantity = itemView.findViewById(R.id.qty);
-            checkbox = itemView.findViewById(R.id.check_box);
+            delete = itemView.findViewById(R.id.deleteBtn);
+            clickableLayout = itemView.findViewById(R.id.clickableLayout);
+//            checkbox = itemView.findViewById(R.id.check_box);
         }
     }
     public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {

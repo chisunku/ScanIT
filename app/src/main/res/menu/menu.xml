@@ -1,16 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+<group android:checkableBehavior="none">
+<!--    <item-->
+<!--        android:id="@+id/product"-->
+<!--        app:showAsAction="collapseActionView" />-->
+    <item
+        android:id="@+id/home"
+        android:title="Home"
+        android:icon="@drawable/home"
+        app:showAsAction="always"
+        android:checked="false"
+        />
 
     <item
-        android:id="@+id/menu_delete"
-        android:title="Delete"
-        android:icon="@drawable/baseline_delete_24"
+        android:id="@+id/favorite"
+        android:title="Favorite"
+        android:icon="@drawable/black_fav"
         app:showAsAction="always"
+        android:checked="false"
         />
     <item
-        android:id="@+id/menu_select_all"
-        android:title="Select all"
-        android:icon="@drawable/baseline_select_all_24"
+        android:id="@+id/cart"
+        android:title="Cart"
+        android:icon="@drawable/cart"
+        android:checked="false"
         app:showAsAction="always"/>
+</group>
 </menu>

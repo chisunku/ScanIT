@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,7 +47,12 @@ public class Product extends AppCompatActivity {
         RecyclerView courseRV = findViewById(R.id.recycler_view);
         ArrayList<CourseModel> courseModelArrayList = new ArrayList<CourseModel>();
         barcode = i.getStringExtra("barcode");
-        System.out.println("in product activity");
+//        System.out.println("in product activity");
+        BottomNavigationView navigationView = findViewById(R.id.bottom_navigation);
+        navigationView.setOnNavigationItemSelectedListener(navListener);
+//        navigationView.setItemIconTintList(null);
+//        navigationView.setItemTextColor();
+//        navigationView.getMenu().findItem(R.id.item_id).setChecked(true);
         String info = i.getStringExtra("json obj");
         try {
 //            ProgressBar pb = findViewById(R.id.progressBar_cyclic);
@@ -94,8 +100,10 @@ public class Product extends AppCompatActivity {
 //                        break;
 //                    }
                     JSONObject store = stores.getJSONObject(k);
-                    CourseModel obj = new CourseModel(barcode, store.get("name").toString(), store.get("price").toString(), store.get("url").toString(), product.get("title").toString(), images.get(0).toString());
-                    courseModelArrayList.add(obj);
+                    if(store.get("price").toString().startsWith("$")) {
+                        CourseModel obj = new CourseModel(barcode, store.get("name").toString(), store.get("price").toString(), store.get("url").toString(), product.get("title").toString(), images.get(0).toString());
+                        courseModelArrayList.add(obj);
+                    }
                 }
 //            JSONArray target = stores.(k);
 //            System.out.println("target values: "+stores.getJSONObject(0).get("price"));
@@ -160,5 +168,32 @@ public class Product extends AppCompatActivity {
             Log.d("TAG", "favorite: db data -> "+c.getString(0));
         }
     }
+
+    private final BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
+        // By using switch we can easily get
+        // the selected fragment
+        // by using there id.
+//        Fragment selectedFragment = null;
+        int itemId = item.getItemId();
+        if (itemId == R.id.home) {
+            Intent i = new Intent(Product.this, MainActivity.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getApplicationContext().startActivity(i);
+        } else if (itemId == R.id.favorite) {
+            Intent i = new Intent(Product.this, Favorite.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getApplicationContext().startActivity(i);
+        } else if (itemId == R.id.cart) {
+            Intent i = new Intent(Product.this, cart.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getApplicationContext().startActivity(i);
+        }
+        // It will help to replace the
+        // one fragment to other.
+//        if (selectedFragment != null) {
+//            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+//        }
+        return false;
+    };
 
 }

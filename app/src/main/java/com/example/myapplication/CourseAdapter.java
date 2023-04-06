@@ -7,13 +7,17 @@ import android.view.LayoutInflater;
         import android.view.View;
         import android.view.ViewGroup;
         import android.widget.ImageView;
-        import android.widget.TextView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
-        import java.util.ArrayList;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
 
 public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.handler> {
 
@@ -75,21 +79,26 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.handler> {
                 DataController db = new DataController(context.getApplicationContext());
                 //qty;
                 int qty = Integer.parseInt(holder.quantity.getText().toString());
-                long r = db.insertCart(model.getBarcode(), model.getProductName(), model.getCost(), qty, model.getStoreName(), model.getUrl(), model.getImageUrl());
+                long r = db.insertCart(model.getBarcode(), model.getProductName(), model.getCost(), qty, model.getStoreName(), model.getUrl(), model.getImageUrl(), "product");
                 if(r == -1){
                     Toast.makeText(context.getApplicationContext(), "Something went wrong :( please try again!!", Toast.LENGTH_LONG).show();
                 }
             }
         });
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.clickableLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //implement onClick
                 System.out.println("Clicked");
                 Toast.makeText(context.getApplicationContext(), "clicked "+model.getStoreName(),Toast.LENGTH_LONG).show();
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(model.getUrl()));
-                context.startActivity(i);
+                if(model.getUrl()==null){
+                    Toast.makeText(context,"Something went wrong, please try again latar!!",Toast.LENGTH_LONG).show();
+                }
+                else {
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(model.getUrl()));
+                    context.startActivity(i);
+                }
             }
         });
 //        holder.priceComp.setOnClickListener(new View.OnClickListener() {
@@ -112,22 +121,24 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.handler> {
 //        private final ImageView courseIV;
         private final TextView courseNameTV;
         private final TextView courseRatingTV;
-        private final ImageView cart;
+        private final FloatingActionButton cart;
         private final TextView quantity;
-        private CardView cardView;
-        private final ImageView plus;
-        private final ImageView minus;
+//        private CardView cardView;
+        private final FloatingActionButton plus;
+        private final FloatingActionButton minus;
+        private final LinearLayout clickableLayout;
 //        private final TextView priceComp;
 
         public handler(View itemView) {
             super(itemView);
             courseNameTV = itemView.findViewById(R.id.storeName);
             courseRatingTV = itemView.findViewById(R.id.cost);
-            cardView = itemView.findViewById(R.id.base_cardview);
+//            cardView = itemView.findViewById(R.id.base_cardview);
             cart = itemView.findViewById(R.id.cart);
             plus = itemView.findViewById(R.id.plus);
             minus = itemView.findViewById(R.id.minus);
             quantity = itemView.findViewById(R.id.qty);
+            clickableLayout = itemView.findViewById(R.id.clickableLayout);
 //            priceComp = itemView.findViewById(R.id.priceComp);
         }
     }

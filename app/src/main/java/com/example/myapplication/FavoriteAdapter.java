@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,6 +18,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -67,6 +70,31 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.handle
                 }
             }
         });
+
+        holder.delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage("Are you sure you want to remove "+model.getProductName()+" from the favorites?");
+                builder.setTitle("REMOVE");
+                builder.setCancelable(false);
+                builder.setPositiveButton("Yes", (dialog, which) -> {
+                    DataController db = new DataController(context);
+                    db.deleteCart(model.getBarcode());
+                    Toast.makeText(context, "Item "+model.getProductName()+" deleted!!",Toast.LENGTH_LONG).show();
+                    favModelArrayList.remove(position);
+                    notifyDataSetChanged();
+                });
+                builder.setNegativeButton("No", (dialog, which) -> {
+                    dialog.cancel();
+                });
+
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+
+        });
     }
 
     @Override
@@ -80,16 +108,18 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.handle
     public static class handler extends RecyclerView.ViewHolder {
         //        private final ImageView courseIV;
         private final TextView ProductName;
-        private CardView cardView;
+//        private CardView cardView;
 
         private ImageView img;
+        final private FloatingActionButton delete;
 
         public handler(View itemView) {
             super(itemView);
 //            courseIV = itemView.findViewById(R.id.idIVCourseImage);
             ProductName = itemView.findViewById(R.id.productName);
-            cardView = itemView.findViewById(R.id.base_cardview);
+//            cardView = itemView.findViewById(R.id.base_cardview);
             img = itemView.findViewById(R.id.productImage);
+            delete = itemView.findViewById(R.id.deleteBtn);
         }
     }
 

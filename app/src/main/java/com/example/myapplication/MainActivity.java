@@ -40,35 +40,67 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+//        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        scan = findViewById(R.id.scanBtn);
         BottomNavigationView navigationView = findViewById(R.id.bottom_navigation);
-        navigationView.bringToFront();
         navigationView.setOnNavigationItemSelectedListener(navListener);
+    }
+    public void scanIT(View v){
+        ScanOptions options = new ScanOptions();
+        options.setDesiredBarcodeFormats(ScanOptions.ONE_D_CODE_TYPES);
+        options.setPrompt("Scan a barcode");
+        options.setOrientationLocked(true);
+        options.setBeepEnabled(true);
+        options.setBarcodeImageEnabled(true);
+        options.setCaptureActivity(Capture.class);
+        barcodeLauncher.launch(options);
+
+    }
+    private final ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(),
+            result -> {
+                if(result.getContents() == null) {
+                    Toast.makeText(MainActivity.this, "Cancelled", Toast.LENGTH_LONG).show();
+                } else {
+//                    Toast.makeText(MainActivity.this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+                    Log.d("TAG", "scanned barcode: "+result.getContents());
+                    ProductDetails jb = new ProductDetails(MainActivity.this);
+                    jb.execute(result.getContents(), "main");
+                }
+            });
+
+    public void showFavorites(View v){
+        Intent i = new Intent(MainActivity.this, Favorite.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        getApplicationContext().startActivity(i);
+    }
+
+    public void cart(View v){
+        Intent i = new Intent(MainActivity.this, cart.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        getApplicationContext().startActivity(i);
+    }
+
+    public void matUI(View v){
+        Intent i = new Intent(MainActivity.this, matUI.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        getApplicationContext().startActivity(i);
     }
 
     private final BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
         // By using switch we can easily get
         // the selected fragment
         // by using there id.
-        Fragment selectedFragment = null;
+//        Fragment selectedFragment = null;
         int itemId = item.getItemId();
         if (itemId == R.id.favorite) {
-            selectedFragment = new CartFragment;
-//            Toast.makeText(getApplicationContext(),"favs",Toast.LENGTH_LONG).show();
-//            Intent i = new Intent(MainActivity.this, Favorite.class);
-//            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            getApplicationContext().startActivity(i);
+            Intent i = new Intent(MainActivity.this, Favorite.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getApplicationContext().startActivity(i);
         } else if (itemId == R.id.cart) {
             Intent i = new Intent(MainActivity.this, cart.class);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getApplicationContext().startActivity(i);
         }
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, selectedFragment)
-                .addToBackStack(null)
-                .commit();
-
-        Drawer.getInstance().setDrawerChecked(itemId);
-        itemPositionStacks.add(itemId);
         // It will help to replace the
         // one fragment to other.
 //        if (selectedFragment != null) {

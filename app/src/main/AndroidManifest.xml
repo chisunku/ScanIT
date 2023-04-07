@@ -17,7 +17,7 @@
         android:icon="@drawable/scan_9808"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MyApplication"
+        android:theme="@style/Theme.MyApp"
         android:hardwareAccelerated="true"
         tools:targetApi="31">
 

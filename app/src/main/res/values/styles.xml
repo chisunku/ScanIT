@@ -1,10 +1,29 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <style name="Theme.MyApp" parent="Theme.MaterialComponents.Light.DarkActionBar">
-        <!-- ... -->
-        <item name="colorSecondary">@color/white</item>
-        <item name="colorOnSecondary">@color/grey</item>
-        <item name="colorOnSurface">@color/black</item>
-    </style>
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<resources>-->
+<!--    <style name="Theme.MyApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">-->
+<!--        &lt;!&ndash; ... &ndash;&gt;-->
+<!--        <item name="colorSecondary">@color/white</item>-->
+<!--        <item name="colorOnSecondary">@color/grey</item>-->
+<!--        <item name="colorOnSurface">@color/black</item>-->
+<!--    </style>-->
 
+<!--</resources>-->
+
+
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.MyApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/purple_200</item>
+        <item name="colorPrimaryVariant">@color/purple_500</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="android:windowBackground">@color/black</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/blue</item>
+        <item name="colorSecondaryVariant">@color/blue_dark</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+    </style>
 </resources>

@@ -1,6 +1,6 @@
 package com.example.myapplication;
 
-public class CourseModel {
+public class ProductModel {
 
     private String storeName;
     private String cost;
@@ -11,7 +11,7 @@ public class CourseModel {
     private int quantity;
 
     // Constructor
-    public CourseModel(String barcode, String storeName, String cost, String url, String productName, String ImageUrl) {
+    public ProductModel(String barcode, String storeName, String cost, String url, String productName, String ImageUrl) {
         this.barcode = barcode;
         this.storeName = storeName;
         this.cost = cost;
@@ -19,7 +19,7 @@ public class CourseModel {
         this.productName = productName;
         this.ImageUrl = ImageUrl;
     }
-    public CourseModel(String storeName, String cost, String url) {
+    public ProductModel(String storeName, String cost, String url) {
         this.storeName = storeName;
         this.cost = cost;
         this.url = url;

@@ -1,14 +1,14 @@
 package com.example.myapplication;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,33 +16,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
-public class Favorite extends AppCompatActivity {
+public class FavoriteFragment extends Fragment {
     FavoriteModel fv;
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fav);
-        RecyclerView courseRV = findViewById(R.id.recycler_view);
-        DataController dataController=new DataController(getBaseContext());
+    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
+        // Defines the xml file for the fragment
+//        return inflater.inflate(R.layout.home_fragment, parent, false);
+        View view = inflater.inflate(R.layout.favorite_fragment, parent,false);
+        RecyclerView courseRV = view.findViewById(R.id.recycler_view);
+        DataController dataController=new DataController(getActivity().getBaseContext());
         Cursor favs = dataController.retrieve();
-        BottomNavigationView navigationView = findViewById(R.id.bottom_navigation);
-        navigationView.setOnNavigationItemSelectedListener(navListener);
-        navigationView.setSelectedItemId(R.id.favorite);
         ArrayList<FavoriteModel> favslist = new ArrayList<>();
         try {
             while(favs.moveToNext()){
-//                ProductDetails pd = new ProductDetails(getApplicationContext());
-//                String s = pd.execute(favs.getString(0), "favs").get();
-//                Log.d("TAG", "onCreate: "+s );
-//                JSONObject json = new JSONObject(s);
-//                JSONObject prods = json.getJSONObject("product");
-//                JSONArray images = prods.getJSONArray("images");
                 Log.d("TAG", "onCreate: favs from db"+favs.getString(1) +" "+ favs.getString(2)+" "+ favs.getString(0) );
                 fv = new FavoriteModel(favs.getString(1) , favs.getString(2), favs.getString(0));
                 favslist.add(fv);
@@ -50,9 +37,9 @@ public class Favorite extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        FavoriteAdapter favAdapter = new FavoriteAdapter(this, favslist);
+        FavoriteAdapter favAdapter = new FavoriteAdapter(getContext(), favslist);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
 
         // in below two lines we are setting layoutmanager and adapter to our recycler view.
         courseRV.setLayoutManager(linearLayoutManager);
@@ -82,7 +69,7 @@ public class Favorite extends AppCompatActivity {
 
                 // below line is to notify our item is removed from adapter.
                 favAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
-                DataController db = new DataController(getApplicationContext());
+                DataController db = new DataController(getActivity().getApplicationContext());
                 db.deleteFav(deletedCourse.getBarcode());
 
                 // below line is to display our snackbar with action.
@@ -103,29 +90,6 @@ public class Favorite extends AppCompatActivity {
             // at last we are adding this
             // to our recycler view.
         }).attachToRecyclerView(courseRV);
-
+        return view;
     }
-
-    private final BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
-        // By using switch we can easily get
-        // the selected fragment
-        // by using there id.
-//        Fragment selectedFragment = null;
-        int itemId = item.getItemId();
-        if (itemId == R.id.home) {
-            Intent i = new Intent(Favorite.this, MainActivity.class);
-            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            getApplicationContext().startActivity(i);
-        } else if (itemId == R.id.cart) {
-            Intent i = new Intent(Favorite.this, cart.class);
-            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            getApplicationContext().startActivity(i);
-        }
-        // It will help to replace the
-        // one fragment to other.
-//        if (selectedFragment != null) {
-//            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
-//        }
-        return true;
-    };
 }

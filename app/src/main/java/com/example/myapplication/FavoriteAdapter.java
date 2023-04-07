@@ -81,7 +81,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.handle
                 builder.setCancelable(false);
                 builder.setPositiveButton("Yes", (dialog, which) -> {
                     DataController db = new DataController(context);
-                    db.deleteCart(model.getBarcode());
+                    db.deleteFav(model.getBarcode());
                     Toast.makeText(context, "Item "+model.getProductName()+" deleted!!",Toast.LENGTH_LONG).show();
                     favModelArrayList.remove(position);
                     notifyDataSetChanged();

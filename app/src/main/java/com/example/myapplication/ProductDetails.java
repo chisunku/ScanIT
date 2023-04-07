@@ -3,10 +3,19 @@ package com.example.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,6 +36,7 @@ public class ProductDetails extends AsyncTask<String, Void, String> {
     Context ctx;
     String barcode;
     String activity;
+    ProductFragment pf;
 
     ProductDetails(Context c){
         ctx = c;
@@ -73,20 +83,27 @@ public class ProductDetails extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String s) {
-        System.out.println("in on post execute: "+s);
-        if(activity.equals("main")) {
-            Intent i = new Intent(ctx, Product.class);
-            i.putExtra("json obj", s);
-            i.putExtra("barcode", barcode);
-            Log.d("TAG", "onPostExecute: json:" + s);
-            ctx.startActivity(i);
+        try {
+            if(s.contains("\"results\":[]")){
+                System.out.println(s);
+                Toast.makeText(ctx, "Product not found :(", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
-//        else if(activity == "favs"){
-//            Intent i = new Intent(ctx, Favorite.class);
-//            i.putExtra("json",s);
-//            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            ctx.startActivity(i);
-//        }
+        Log.d("TAG", "onPostExecute: product is there"+s);
+            Bundle bundle = new Bundle();
+            bundle.putString("json obj", s);
+            bundle.putString("barcode", barcode);
+            Log.d("TAG", "onPostExecute: json:" + s);
+            ProductFragment pf = new ProductFragment();
+            pf.setArguments(bundle);
+            FragmentManager fragmentManager =  ((AppCompatActivity)ctx).getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.content, pf);
+            fragmentTransaction.addToBackStack("prod");
+            fragmentTransaction.commit();
         super.onPostExecute(s);
     }
 

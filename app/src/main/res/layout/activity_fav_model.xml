@@ -43,7 +43,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:contentDescription="plus"
+                app:backgroundTint="@color/purple_200"
+                android:contentDescription="delete"
                 app:fabSize="mini"
                 app:srcCompat="@drawable/baseline_delete_24" />
         </LinearLayout>

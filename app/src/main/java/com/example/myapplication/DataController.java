@@ -139,8 +139,7 @@ public class DataController
     public Cursor retrieve()
     {
         SQLiteDatabase read = dbHelper.getReadableDatabase();
-        return read.query(TABLE_NAME, new String[]{barcode, "productName", "imageUrl"},
-                null, null, null, null, null);
+        return read.query(TABLE_NAME, new String[]{barcode, "productName", "imageUrl"}, null, null, null, null, null);
     }
 
     public Cursor retrieveCart()
@@ -163,22 +162,11 @@ public class DataController
             // TODO Auto-generated method stub
             try
             {
-<<<<<<< Updated upstream
                 db.execSQL("create table favorite(barcode text primary key, productName text not null, " +
                         "imageUrl text not null);");
                 db.execSQL("create table cart(barcode text primary key, productName text not null," +
                         "cost real not null, quantity integer not null, seller text not null, " +
                         "url text not null, imageUrl text not null);");
-=======
-                Log.d("TAG", "onCreate: before table creation");
-                db.execSQL("create table if NOT EXISTS favorite(barcode text primary key, productName text not null, " +
-                        "imageUrl text not null)");
-                Log.d("TAG", "onCreate: after fav table creation");
-                db.execSQL("create table if NOT EXISTS cart(barcode text not null, productName text not null," +
-                        "cost real not null, quantity integer not null, seller text not null, " +
-                        "url text not null, imageUrl text not null, primary key (barcode, seller))");
-                Log.d("TAG", "onCreate: after DB creation");
->>>>>>> Stashed changes
             }
             catch(SQLiteException e)
             {
@@ -189,7 +177,7 @@ public class DataController
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             // TODO Auto-generated method stub
-            db.execSQL("DROP TABLE IF EXISTS favorite");
+            db.execSQL("DROP TABLE IF EXISTS favorites");
             db.execSQL("DROP TABLE IF EXISTS cart");
             onCreate(db);
         }

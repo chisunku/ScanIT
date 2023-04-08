@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceFragmentCompat;
 
 
@@ -41,65 +42,39 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 //        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        scan = findViewById(R.id.scanBtn);
+//        scan = findViewById(R.id.scanBtn);
         BottomNavigationView navigationView = findViewById(R.id.bottom_navigation);
         navigationView.setOnNavigationItemSelectedListener(navListener);
-    }
-    public void scanIT(View v){
-        ScanOptions options = new ScanOptions();
-        options.setDesiredBarcodeFormats(ScanOptions.ONE_D_CODE_TYPES);
-        options.setPrompt("Scan a barcode");
-        options.setOrientationLocked(true);
-        options.setBeepEnabled(true);
-        options.setBarcodeImageEnabled(true);
-        options.setCaptureActivity(Capture.class);
-        barcodeLauncher.launch(options);
+        HomeFragment fragment = new HomeFragment();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.content, fragment, "");
+        fragmentTransaction.commit();
 
     }
-    private final ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(),
-            result -> {
-                if(result.getContents() == null) {
-                    Toast.makeText(MainActivity.this, "Cancelled", Toast.LENGTH_LONG).show();
-                } else {
-//                    Toast.makeText(MainActivity.this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
-                    Log.d("TAG", "scanned barcode: "+result.getContents());
-                    ProductDetails jb = new ProductDetails(MainActivity.this);
-                    jb.execute(result.getContents(), "main");
-                }
-            });
-
-    public void showFavorites(View v){
-        Intent i = new Intent(MainActivity.this, Favorite.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        getApplicationContext().startActivity(i);
-    }
-
-    public void cart(View v){
-        Intent i = new Intent(MainActivity.this, cart.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        getApplicationContext().startActivity(i);
-    }
-
-    public void matUI(View v){
-        Intent i = new Intent(MainActivity.this, matUI.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        getApplicationContext().startActivity(i);
-    }
-
     private final BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
-        // By using switch we can easily get
-        // the selected fragment
-        // by using there id.
-//        Fragment selectedFragment = null;
+        Fragment selectedFragment = null;
         int itemId = item.getItemId();
-        if (itemId == R.id.favorite) {
-            Intent i = new Intent(MainActivity.this, Favorite.class);
-            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            getApplicationContext().startActivity(i);
+        if(itemId == R.id.home){
+            HomeFragment fragment = new HomeFragment();
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.content, fragment, "");
+            fragmentTransaction.addToBackStack("home");
+            fragmentTransaction.commit();
+            return true;
+        } else if (itemId == R.id.favorite) {
+            FavoriteFragment fragment2 = new FavoriteFragment();
+            FragmentTransaction fragmentTransaction1 = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction1.replace(R.id.content, fragment2);
+            fragmentTransaction1.addToBackStack("fav");
+            fragmentTransaction1.commit();
+            return true;
         } else if (itemId == R.id.cart) {
-            Intent i = new Intent(MainActivity.this, cart.class);
-            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            getApplicationContext().startActivity(i);
+            CartFragment fragment1 = new CartFragment();
+            FragmentTransaction fragmentTransaction1 = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction1.replace(R.id.content, fragment1);
+            fragmentTransaction1.addToBackStack("cart");
+            fragmentTransaction1.commit();
+            return true;
         }
         // It will help to replace the
         // one fragment to other.

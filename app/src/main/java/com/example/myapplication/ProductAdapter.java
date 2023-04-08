@@ -1,47 +1,48 @@
 package com.example.myapplication;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
         import android.view.View;
         import android.view.ViewGroup;
-        import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
-public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.handler> {
+public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.handler> {
 
     private final Context context;
-    private final ArrayList<CourseModel> courseModelArrayList;
+    private final ArrayList<ProductModel> productModelArrayList;
+    DataController db;
 
     // Constructor
-    public CourseAdapter(Context context, ArrayList<CourseModel> courseModelArrayList) {
+    public ProductAdapter(Context context, ArrayList<ProductModel> productModelArrayList) {
         this.context = context;
-        this.courseModelArrayList = courseModelArrayList;
+        this.productModelArrayList = productModelArrayList;
+        db = new DataController(context.getApplicationContext());
     }
 
     @NonNull
     @Override
-    public CourseAdapter.handler onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ProductAdapter.handler onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // to inflate the layout for each item of recycler view.
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_card_layout, parent, false);
         return new handler(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CourseAdapter.handler holder, int position) {
+    public void onBindViewHolder(@NonNull ProductAdapter.handler holder, int position) {
         // to set data to textview and imageview of each card layout
-        CourseModel model = courseModelArrayList.get(position);
+        ProductModel model = productModelArrayList.get(position);
         holder.courseNameTV.setText(model.getStoreName());
         holder.courseRatingTV.setText("" + model.getCost());
 //        holder.courseIV.setImageResource(model.getCourse_image());
@@ -76,7 +77,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.handler> {
             public void onClick(View v) {
                 System.out.println("added to cart + "+model.getImageUrl());
                 Toast.makeText(context.getApplicationContext(), "adding to cart", Toast.LENGTH_LONG).show();
-                DataController db = new DataController(context.getApplicationContext());
+//                DataController db = new DataController(context.getApplicationContext());
                 //qty;
                 int qty = Integer.parseInt(holder.quantity.getText().toString());
                 long r = db.insertCart(model.getBarcode(), model.getProductName(), model.getCost(), qty, model.getStoreName(), model.getUrl(), model.getImageUrl(), "product");
@@ -97,22 +98,16 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.handler> {
                 else {
                     Intent i = new Intent(Intent.ACTION_VIEW);
                     i.setData(Uri.parse(model.getUrl()));
-                    context.startActivity(i);
+                    ((Activity)v.getContext()).startActivity(i);
                 }
             }
         });
-//        holder.priceComp.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                new ProductDetails(context).equals()
-//            }
-//        });
     }
 
     @Override
     public int getItemCount() {
         // this method is used for showing number of card items in recycler view
-        return courseModelArrayList.size();
+        return productModelArrayList.size();
     }
 
     // View holder class for initializing of your views such as TextView and Imageview

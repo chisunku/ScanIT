@@ -7,7 +7,13 @@ import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 import android.util.Log;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 public class DataController
 {
@@ -16,15 +22,21 @@ public class DataController
     public static final String TABLE_NAME="favorite";
     public static final String DATABASE_NAME="barcodes.db";
     public static final int DATABASE_VERSION=4;
-    //type is that its either a product or store saved
-    public static final String TABLE_CREATE="create table favorites (barcode text primary key);";
 
     DataBaseHelper dbHelper;
     Context context;
     SQLiteDatabase db;
 
+    TextView total;
     public DataController(Context context)
     {
+        this.context=context;
+        dbHelper = new DataBaseHelper(context);
+    }
+
+    public DataController(Context context, TextView total)
+    {
+        this.total = total;
         this.context=context;
         dbHelper = new DataBaseHelper(context);
     }
@@ -40,11 +52,9 @@ public class DataController
         dbHelper.close();
     }
 
-    public void deleteCart(String barcode){
+    public void deleteCart(String barcode, String storeName){
         db = dbHelper.getWritableDatabase();
-        db.delete("cart", "barcode=?",new String[]{barcode});
-        cart cartObj = new cart();
-        cartObj.updateTotal(context);
+        db.delete("cart", "barcode=? and seller = ?",new String[]{barcode, storeName});
         db.close();
     }
 
@@ -72,9 +82,9 @@ public class DataController
                            String imageUrl, String from){
         db = dbHelper.getWritableDatabase();
 //        db.execSQL("DROP TABLE IF EXISTS cart");
-//        db.execSQL("create table cart(barcode text primary key, productName text not null," +
+//        db.execSQL("create table cart(barcode text not null, productName text not null," +
 //                "cost real not null, quantity integer not null, seller text not null, " +
-//                "url text not null, imageUrl text not null);");
+//                "url text not null, imageUrl text not null, Primary key(barcode, seller));");
         Log.d("TAG", "insert: coming here in insert db "+barcode);
         ContentValues content=new ContentValues();
         content.put("barcode", barcode);
@@ -108,8 +118,13 @@ public class DataController
             }
         }
         if(from.equals("undo")) {
-            cart cartObj = new cart();
-            cartObj.updateTotal(context);
+//            FragmentTransaction fragmentManager =  ((AppCompatActivity)context).getSupportFragmentManager().beginTransaction();
+//            if (Build.VERSION.SDK_INT >= 26) {
+//                fragmentManager.setReorderingAllowed(false);
+//            }
+//            fragmentManager.detach(CartFragment.instance).attach(CartFragment.instance).commit();
+//            CartFragment cobj = new CartFragment();
+//            cobj.updateTotal(context, cobj.view);
         }
         return res;
     }
@@ -139,7 +154,8 @@ public class DataController
     public Cursor retrieve()
     {
         SQLiteDatabase read = dbHelper.getReadableDatabase();
-        return read.query(TABLE_NAME, new String[]{barcode, "productName", "imageUrl"}, null, null, null, null, null);
+        return read.query(TABLE_NAME, new String[]{barcode, "productName", "imageUrl"},
+                null, null, null, null, null);
     }
 
     public Cursor retrieveCart()
@@ -162,11 +178,14 @@ public class DataController
             // TODO Auto-generated method stub
             try
             {
-                db.execSQL("create table favorite(barcode text primary key, productName text not null, " +
-                        "imageUrl text not null);");
-                db.execSQL("create table cart(barcode text primary key, productName text not null," +
+                Log.d("TAG", "onCreate: before table creation");
+                db.execSQL("create table if NOT EXISTS favorite(barcode text primary key, productName text not null, " +
+                        "imageUrl text not null)");
+                Log.d("TAG", "onCreate: after fav table creation");
+                db.execSQL("create table if NOT EXISTS cart(barcode text not null, productName text not null," +
                         "cost real not null, quantity integer not null, seller text not null, " +
-                        "url text not null, imageUrl text not null);");
+                        "url text not null, imageUrl text not null, primary key (barcode, seller))");
+                Log.d("TAG", "onCreate: after DB creation");
             }
             catch(SQLiteException e)
             {
@@ -177,7 +196,7 @@ public class DataController
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             // TODO Auto-generated method stub
-            db.execSQL("DROP TABLE IF EXISTS favorites");
+            db.execSQL("DROP TABLE IF EXISTS favorite");
             db.execSQL("DROP TABLE IF EXISTS cart");
             onCreate(db);
         }

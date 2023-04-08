@@ -1,9 +1,11 @@
 package com.example.myapplication;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -17,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -26,6 +29,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -38,18 +43,20 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.carthandler> {
-    cart cartObj = new cart();
+    CartFragment cartObj = new CartFragment();
     private final Context context;
     public final ArrayList<CartModel> cartModelArrayList;
     boolean isEnable=false;
     ArrayList<CartModel> selectList=new ArrayList<CartModel>();
     boolean isSelectAll=false;
     MainViewModel mainViewModel;
+    TextView total;
 
     // Constructor
-    public CartAdapter(Context context, ArrayList<CartModel> cartModelArrayList) {
+    public CartAdapter(Context context, ArrayList<CartModel> cartModelArrayList, TextView total) {
         this.context = context;
         this.cartModelArrayList = cartModelArrayList;
+        this.total = total;
     }
 
     @NonNull
@@ -90,7 +97,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.carthandler> {
                     else {
                         Intent i = new Intent(Intent.ACTION_VIEW);
                         i.setData(Uri.parse(model.getUrl()));
-                        context.startActivity(i);
+                        ((Activity)v.getContext()).startActivity(i);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -98,10 +105,17 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.carthandler> {
             }
         });
 
+
+
         holder.priceComp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
+                    ProductFragment pf = new ProductFragment();
+                    FragmentManager fragmentManager =  ((AppCompatActivity)context).getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//                    fragmentTransaction.replace(R.id.content, pf);
+//                    fragmentTransaction.commit();
                     new ProductDetails(context).execute(model.getBarcode(), "main").get();
                 } catch (ExecutionException e) {
                     throw new RuntimeException(e);
@@ -124,7 +138,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.carthandler> {
                     db.updateCart(model.getBarcode(), model.getProductName(), model.getCost(),
                             model.getQuantity(), model.getSeller(), model.getUrl(), model.getImageUrl(), qty);
 //                    cartObj.total.setText(qty+"");
-                    cartObj.updateTotal(context);
+                    cartObj.updateTotal(total, context);
                     notifyDataSetChanged();
                 }
             }
@@ -138,14 +152,33 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.carthandler> {
                     qty-=1;
                     model.setQuantity(qty);
                     holder.quantity.setText(qty+"");
-                    cartObj.updateTotal(context);
+                    total.setText("in minus");
                     DataController db = new DataController(context);
                     db.updateCart(model.getBarcode(), model.getProductName(), model.getCost(),
                             model.getQuantity(), model.getSeller(), model.getUrl(), model.getImageUrl(), qty);
                     notifyDataSetChanged();
+                    cartObj.updateTotal(total, context);
                 }
                 else{
                     Toast.makeText(context.getApplicationContext(), "No items added", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        holder.favorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DataController db = new DataController(context);
+                long l = db.insertFav(model.getBarcode(), model.getProductName(),model.getImageUrl());
+                Log.d("TAG", "favorite db res val : "+l );
+                if(l == -1){
+                    Toast.makeText(context.getApplicationContext(),"Already in favs",Toast.LENGTH_LONG).show();
+                }
+                else
+                    Toast.makeText(context.getApplicationContext(), "product added to fav",Toast.LENGTH_LONG).show();
+                Cursor c = db.retrieve();
+                while(c.moveToNext()){
+                    Log.d("TAG", "favorite: db data -> "+c.getString(0));
                 }
             }
         });
@@ -159,10 +192,12 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.carthandler> {
                 builder.setCancelable(false);
                 builder.setPositiveButton("Yes", (dialog, which) -> {
                     DataController db = new DataController(context);
-                    db.deleteCart(model.getBarcode());
+                    db.deleteCart(model.getBarcode(), model.getSeller());
                     Toast.makeText(context, "Item "+model.getProductName()+" deleted!!",Toast.LENGTH_LONG).show();
                     cartModelArrayList.remove(position);
+                    cartObj.updateTotal(total, context);
                     notifyDataSetChanged();
+
                 });
                 builder.setNegativeButton("No", (dialog, which) -> {
                     dialog.cancel();
@@ -363,11 +398,12 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.carthandler> {
         private final TextView store;
         private final TextView cost;
 //        private CardView cardView;
-        private final TextView priceComp;
+        private final Button priceComp;
         private final ImageView plus;
         private final ImageView minus;
         private final TextView quantity;
         private final ImageView delete;
+        private final ImageView favorite;
         private final LinearLayout clickableLayout;
 //        private final ImageView checkbox;
 
@@ -383,6 +419,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.carthandler> {
             minus = itemView.findViewById(R.id.minus);
             quantity = itemView.findViewById(R.id.qty);
             delete = itemView.findViewById(R.id.deleteBtn);
+            favorite = itemView.findViewById(R.id.favorite);
             clickableLayout = itemView.findViewById(R.id.clickableLayout);
 //            checkbox = itemView.findViewById(R.id.check_box);
         }

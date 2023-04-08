@@ -8,9 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,17 +23,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class CartFragment extends Fragment {
-    public static cart instance = null;
+    public static CartFragment instance = null;
     public TextView total;
     CartAdapter favAdapter;
+    View view;
     Context ctx;
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         // Defines the xml file for the fragment
 //        return inflater.inflate(R.layout.home_fragment, parent, false);
-        View view = inflater.inflate(R.layout.cart_fragment, parent,false);
+        instance = new CartFragment();
+        view = inflater.inflate(R.layout.cart_fragment, parent,false);
         RecyclerView courseRV = view.findViewById(R.id.items);
         ctx = getActivity().getBaseContext();
 
@@ -50,7 +58,9 @@ public class CartFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        favAdapter = new CartAdapter(getContext(), favslist);
+
+        total = view.findViewById(R.id.total);
+        favAdapter = new CartAdapter(getContext(), favslist, total);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
 
@@ -58,8 +68,11 @@ public class CartFragment extends Fragment {
         courseRV.setLayoutManager(linearLayoutManager);
         courseRV.setAdapter(favAdapter);
 
-        total = view.findViewById(R.id.total);
-        total.setText(cartTotal+"");
+        DecimalFormat df = new DecimalFormat("0.00");
+        String cTotal = df.format(cartTotal);
+        total.setText(cTotal);
+
+
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             @Override
@@ -71,47 +84,50 @@ public class CartFragment extends Fragment {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                // this method is called when we swipe our item to right direction.
-                // on below line we are getting the item at a particular position.
                 CartModel deletedCourse = favslist.get(viewHolder.getAdapterPosition());
-
-                // below line is to get the position
-                // of the item at that position.
                 int position = viewHolder.getAdapterPosition();
-                // this method is called when item is swiped.
-                // below line is to remove item from our array list.
                 favslist.remove(viewHolder.getAdapterPosition());
-
-                // below line is to notify our item is removed from adapter.
                 favAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
                 DataController db = new DataController(getContext().getApplicationContext());
-                db.deleteCart(deletedCourse.getBarcode());
-
-                // below line is to display our snackbar with action.
+                db.deleteCart(deletedCourse.getBarcode(), deletedCourse.getSeller());
+                updateTotal(total, getContext());
                 Snackbar.make(courseRV, deletedCourse.getProductName(), Snackbar.LENGTH_LONG).setAction("Undo", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // adding on click listener to our action of snack bar.
-                        // below line is to add our item to array list with a position.
                         favslist.add(position, deletedCourse);
                         db.insertCart(deletedCourse.getBarcode(), deletedCourse.getProductName(), deletedCourse.getCost(),
                                 deletedCourse.getQuantity(), deletedCourse.getSeller(), deletedCourse.getUrl(),
                                 deletedCourse.getImageUrl(), "undo");
-
-                        // below line is to notify item is
-                        // added to our adapter class.
+                        updateTotal(total, getContext());
                         favAdapter.notifyItemInserted(position);
+
                     }
                 }).show();
             }
-            // at last we are adding this
-            // to our recycler view.
         }).attachToRecyclerView(courseRV);
 
         return view;
     }
 
-    public void updateTotal(Context ctx){
+//    @Override
+//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+//        super.onViewCreated(view, savedInstanceState);
+//        total = view.findViewById(R.id.total);
+//        DataController dataController = new DataController(ctx);
+//        Cursor favs = dataController.retrieveCart();
+//        float t = 0;
+//        while(favs.moveToNext()){
+//            t += favs.getInt(3)*Float.parseFloat(favs.getString(2)
+//                    .replaceAll("[^.0-9]",""));
+//        }
+//        Log.d("in updatetotal", "updateTotal: total = "+t);
+////        total = view.findViewById(R.id.total);
+////    .findViewById(R.id.total);
+//        total.setText("hello");
+//        total.setText(t+"");
+//    }
+
+    public void updateTotal(TextView tot, Context ctx){
         DataController dataController = new DataController(ctx);
         Cursor favs = dataController.retrieveCart();
         float t = 0;
@@ -120,8 +136,25 @@ public class CartFragment extends Fragment {
                     .replaceAll("[^.0-9]",""));
         }
         Log.d("in updatetotal", "updateTotal: total = "+t);
-        total = instance.findViewById(R.id.total);
-        total.setText("hello");
-        total.setText(t+"");
+        DecimalFormat df = new DecimalFormat("0.00");
+        String total = df.format(t);
+        Log.d("TAG", "updateTotal: total = "+total);
+        tot.setText(total);
+    }
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+
+        super.setUserVisibleHint(isVisibleToUser);
+
+        // Refresh tab data:
+
+        if (getFragmentManager() != null) {
+
+            getFragmentManager()
+                    .beginTransaction()
+                    .detach(this)
+                    .attach(this)
+                    .commit();
+        }
     }
 }

@@ -1,5 +1,9 @@
 package com.example.myapplication;
 
+import static android.app.ProgressDialog.show;
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,6 +30,9 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class ProductFragment extends Fragment {
     String barcode;
@@ -128,6 +135,66 @@ public class ProductFragment extends Fragment {
                     while(c.moveToNext()){
                         Log.d("TAG", "favorite: db data -> "+c.getString(0));
                     }
+                }
+            });
+
+            Button sort = view.findViewById(R.id.sort);
+
+            Log.d("TAG", "onClick: before sorting list : ");
+            for(ProductModel p : productModelArrayList){
+                Log.d("TAG", "onClick list items: "+p.getCost()+" "+p.getStoreName());
+            }
+
+            sort.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CharSequence[] items = {"Price Low to High", "Price High to Low"};
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogStyle);
+//                    builder.setMessage("Are you sure you want to delete "+model.getProductName()+" from the cart?");
+                    builder.setTitle("DELETE");
+
+                    builder.setCancelable(false);
+                    builder.setItems(items, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Log.d("TAG", "onClick: clicked value : "+items[which]);
+                                    if(items[which].equals("Price Low to High")){
+                                        productModelArrayList.sort((a,b)->Float.parseFloat(a.getCost().replaceAll("\\$",""))
+                                                >= Float.parseFloat((b.getCost().replaceAll("\\$","")))? 1 : -1);
+                                        productAdapter.notifyDataSetChanged();
+                                    }
+                                    else if(items[which].equals("Price High to Low")){
+                                        productModelArrayList.sort((a,b)->Float.parseFloat(a.getCost().replaceAll("\\$",""))
+                                                >= Float.parseFloat((b.getCost().replaceAll("\\$","")))? -1 : 1);
+                                        productAdapter.notifyDataSetChanged();
+                                    }
+
+                                }
+                            });
+//                        DataController db = new DataController(context);
+//                        db.deleteCart(model.getBarcode(), model.getSeller());
+//                        Toast.makeText(context, "Item "+model.getProductName()+" deleted!!",Toast.LENGTH_LONG).show();
+//                        cartModelArrayList.remove(position);
+//                        cartObj.updateTotal(total, context);
+//                        notifyDataSetChanged();
+//
+//                    });
+//                    builder.setNegativeButton("No", (dialog, which) -> {
+//                        dialog.cancel();
+//                    });
+
+                            AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+//                    AlertDialogBuilder(getContext())
+//                            .setTitle("sort")
+//                            .setItems(items) { dialog, which ->
+//                        // Respond to item chosen
+//                    }
+//        .show();
+//                    productModelArrayList.sort((a,b)->Float.parseFloat(a.getCost().replaceAll("\\$",""))
+//                            >= Float.parseFloat((b.getCost().replaceAll("\\$","")))? 1 : -1);
+//                    productAdapter.notifyDataSetChanged();
+
                 }
             });
         } catch (JSONException e) {

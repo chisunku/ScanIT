@@ -75,7 +75,7 @@ public class DataController
         content.put("seller",seller);
         content.put("url", url);
         content.put("imageUrl",imageUrl);
-        db.update("cart",content,"barcode=?",new String[]{String.valueOf(barcode)});
+        db.update("cart",content,"barcode=? and seller=?",new String[]{String.valueOf(barcode), seller});
         return 0;
     }
     public long insertCart(String barcode, String productName, String cost, int quantity, String seller, String url,

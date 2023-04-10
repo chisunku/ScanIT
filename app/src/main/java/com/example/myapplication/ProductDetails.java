@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -16,6 +17,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,6 +37,8 @@ import java.util.stream.Collectors;
 public class ProductDetails extends AsyncTask<String, Void, String> {
 
     Context ctx;
+    ProgressDialog progressDialog;
+    LinearProgressIndicator pd;
     String barcode;
     String activity;
     ProductFragment pf;
@@ -50,7 +55,7 @@ public class ProductDetails extends AsyncTask<String, Void, String> {
             URL url = new URL("https://barcodes1.p.rapidapi.com/?query="+voids[0]);
             barcode = voids[0];
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestProperty("X-RapidAPI-Key","9fa917d25amshb66b38820f4307fp133c26jsn5be5aa0cbf1c");
+            connection.setRequestProperty("X-RapidAPI-Key","107297c8c4msh813718b79ab95abp135b6djsn549defa91b08");
             connection.setRequestProperty("X-RapidAPI-Host", "barcodes1.p.rapidapi.com");
             connection.setRequestMethod("GET");
             // Log the server response code
@@ -81,8 +86,16 @@ public class ProductDetails extends AsyncTask<String, Void, String> {
         return sb.toString();
     }
 
+    protected void onPreExecute() {
+//        pd = LinearProgressIndicator.
+        progressDialog = ProgressDialog.show(ctx,
+                "ProgressDialog",
+                "Fetching data");
+    }
+
     @Override
     protected void onPostExecute(String s) {
+        progressDialog.dismiss();
         try {
             if(s.contains("\"results\":[]")){
                 System.out.println(s);

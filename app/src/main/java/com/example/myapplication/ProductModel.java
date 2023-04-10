@@ -1,6 +1,8 @@
 package com.example.myapplication;
 
-public class ProductModel {
+import android.util.Log;
+
+public class ProductModel implements Comparable<ProductModel>{
 
     private String storeName;
     private String cost;
@@ -71,5 +73,23 @@ public class ProductModel {
 
     public void setCourse_rating(String cost) {
         this.cost = cost;
+    }
+
+
+//    @Override
+//    public int compareTo(Object o) {
+//        ProductModel pm = (ProductModel) o;
+////        Log.d("TAG", "compareTo: first o1: "+this.cost.replaceAll("\\$","")+" "+Integer.parseInt(this.cost.replaceAll("\\$","")));
+////        Log.d("TAG", "compareTo: first o2: "+pm.getCost().replaceAll("\\$","")+" "+Integer.parseInt(pm.getCost().replaceAll("\\$","")));
+//        return Math.round(Float.parseFloat(this.cost.replaceAll("\\$","")))
+//                - Math.round(Float.parseFloat(pm.getCost().replaceAll("\\$","")));
+//    }
+
+    @Override
+    public int compareTo(ProductModel o) {
+//        Log.d("a", "compareTo: the value : "+(Math.round(Float.parseFloat(this.cost.replaceAll("\\$","")))
+//                - Math.round(Float.parseFloat(o.getCost().replaceAll("\\$","")))));
+        return Math.round(Float.parseFloat(this.cost.replaceAll("\\$","")))
+                - Math.round(Float.parseFloat(o.getCost().replaceAll("\\$","")));
     }
 }

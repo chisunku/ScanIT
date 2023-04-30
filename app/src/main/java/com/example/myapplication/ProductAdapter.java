@@ -84,6 +84,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.handler>
                 if(r == -1){
                     Toast.makeText(context.getApplicationContext(), "Something went wrong :( please try again!!", Toast.LENGTH_LONG).show();
                 }
+                dynamoDB ddb = new dynamoDB(context);
+                String storeName = model.getStoreName();
+                ddb.execute(storeName);
             }
         });
         holder.clickableLayout.setOnClickListener(new View.OnClickListener() {
@@ -126,7 +129,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.handler>
 
         public handler(View itemView) {
             super(itemView);
-            courseNameTV = itemView.findViewById(R.id.storeName);
+            courseNameTV = itemView.findViewById(R.id.Url);
             courseRatingTV = itemView.findViewById(R.id.cost);
 //            cardView = itemView.findViewById(R.id.base_cardview);
             cart = itemView.findViewById(R.id.cart);

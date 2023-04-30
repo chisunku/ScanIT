@@ -95,11 +95,14 @@ public class ProductDetails extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String s) {
-        progressDialog.dismiss();
+        Log.d("ProductDetails.java", "onPostExecute: "+s);
         try {
             if(s.contains("\"results\":[]")){
-                System.out.println(s);
-                Toast.makeText(ctx, "Product not found :(", Toast.LENGTH_SHORT).show();
+//                System.out.println(s);
+//                GoogleAPI api = new GoogleAPI(ctx);
+//                api.execute(barcode);
+                progressDialog.dismiss();
+                Toast.makeText(ctx, "Sorry this product was not found :(", Toast.LENGTH_SHORT).show();
                 return;
             }
         }catch (Exception e){
@@ -109,6 +112,7 @@ public class ProductDetails extends AsyncTask<String, Void, String> {
             Bundle bundle = new Bundle();
             bundle.putString("json obj", s);
             bundle.putString("barcode", barcode);
+            bundle.putString("fromAPI", "Rapid");
             Log.d("TAG", "onPostExecute: json:" + s);
             ProductFragment pf = new ProductFragment();
             pf.setArguments(bundle);
@@ -118,6 +122,7 @@ public class ProductDetails extends AsyncTask<String, Void, String> {
             fragmentTransaction.addToBackStack("prod");
             fragmentTransaction.commit();
         super.onPostExecute(s);
+        progressDialog.dismiss();
     }
 
 }

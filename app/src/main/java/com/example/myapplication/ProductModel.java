@@ -21,11 +21,6 @@ public class ProductModel implements Comparable<ProductModel>{
         this.productName = productName;
         this.ImageUrl = ImageUrl;
     }
-    public ProductModel(String storeName, String cost, String url) {
-        this.storeName = storeName;
-        this.cost = cost;
-        this.url = url;
-    }
 
     public int getQuantity(){
         return quantity;

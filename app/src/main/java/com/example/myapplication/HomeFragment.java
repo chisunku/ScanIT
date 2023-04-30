@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,6 +36,15 @@ public class HomeFragment extends Fragment {
                 barcodeLauncher.launch(options);
             }
         });
+
+        Button analytics = view.findViewById(R.id.analytics);
+        analytics.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getContext(), )
+            }
+        });
+
         return view;
     }
 
@@ -45,8 +55,11 @@ public class HomeFragment extends Fragment {
                 } else {
 //                    Toast.makeText(MainActivity.this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
                     Log.d("TAG", "scanned barcode: "+result.getContents());
+                    Log.d("TAG", "results: "+result);
                     ProductDetails jb = new ProductDetails(getActivity());
                     jb.execute(result.getContents(), "main");
+//                    GoogleAPI gpi = new GoogleAPI(getActivity());
+//                    gpi.execute(result.getContents());
                 }
             });
 

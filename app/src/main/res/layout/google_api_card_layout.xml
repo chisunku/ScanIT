@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:padding="10dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="5dp"
+                android:id="@+id/clickableLayout">
+
+                <ImageView
+                    android:id="@+id/icon"
+                    android:layout_width="132dp"
+                    android:layout_height="wrap_content"
+                    android:maxWidth="5dp"
+                    android:maxHeight="5dp"
+                    android:foregroundGravity="left"
+                    app:srcCompat="@drawable/ic_launcher_foreground" />
+
+                <!-- Title, secondary and supporting text -->
+                <TextView
+                    android:id="@+id/Url"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:padding="30dp"
+                    android:text="URL"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    android:textColor="@color/black" />
+
+            </LinearLayout>
+
+            <!-- Buttons -->
+
+
+            <TextView
+                android:id="@+id/snippet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/grey"
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:text="Snipper" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+
+</LinearLayout>

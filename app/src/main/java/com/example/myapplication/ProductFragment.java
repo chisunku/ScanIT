@@ -4,9 +4,11 @@ import static android.app.ProgressDialog.show;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.android.material.button.MaterialButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,6 +44,8 @@ public class ProductFragment extends Fragment {
     String barcode;
     JSONObject product = null;
     JSONArray images = null;
+
+    DataController db;
     String TAG = "ProductFragment";
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -53,6 +58,7 @@ public class ProductFragment extends Fragment {
         TextView category = view.findViewById(R.id.category);
         TextView manufacturer = view.findViewById(R.id.manufacturer);
         Log.d(TAG, "onCreateView: in product fragment");
+        db = new DataController(getContext());
 //        if(from.equals("googleAPI")){
 //            Log.d(TAG, "onCreateView: in google API ");
 //            ObjectMapper objectMapper = new ObjectMapper();
@@ -161,7 +167,7 @@ public class ProductFragment extends Fragment {
                 }
 
 
-                ProductAdapter productAdapter = new ProductAdapter(getActivity().getApplicationContext(), productModelArrayList);
+                ProductAdapter productAdapter = new ProductAdapter(getContext(), productModelArrayList);
 
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext(),
                         LinearLayoutManager.VERTICAL, false);
@@ -169,11 +175,20 @@ public class ProductFragment extends Fragment {
                 // in below two lines we are setting layoutmanager and adapter to our recycler view.
                 courseRV.setLayoutManager(linearLayoutManager);
                 courseRV.setAdapter(productAdapter);
-                Button fav = view.findViewById(R.id.favorite);
+                MaterialButton fav = view.findViewById(R.id.favorite);
+
+                //check if already in fav and change the bg
+                if(db.checkFav(barcode)){
+//                    fav.setBackgroundColor(getResources().getColor(R.color.purple_200));
+                    fav.setStrokeColor(ColorStateList.valueOf(getResources().getColor(R.color.purple_500)));
+                    fav.setTextColor(ColorStateList.valueOf(getResources().getColor(R.color.purple_500)));
+                    fav.setIconTint(ColorStateList.valueOf(getResources().getColor(R.color.purple_500)));
+                    fav.setBackgroundColor(getResources().getColor(R.color.purple_200));
+                }
                 fav.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        DataController db = new DataController(getContext());
+//                        DataController db = new DataController(getContext());
                         long l = 0;
                         try {
                             l = db.insertFav(barcode, product.get("title").toString(), images.get(0).toString());
@@ -205,9 +220,9 @@ public class ProductFragment extends Fragment {
                         CharSequence[] items = {"Price Low to High", "Price High to Low"};
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogStyle);
 //                    builder.setMessage("Are you sure you want to delete "+model.getProductName()+" from the cart?");
-                        builder.setTitle("DELETE");
+                        builder.setTitle("SORT PRODUCTS");
 
-                        builder.setCancelable(false);
+                        builder.setCancelable(true);
                         builder.setItems(items, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -264,7 +279,7 @@ public class ProductFragment extends Fragment {
     }
 
     public void favorite(View v) throws JSONException {
-        DataController db = new DataController(getContext());
+//        DataController db = new DataController(getContext());
         long l = db.insertFav(barcode, product.get("title").toString(),images.get(0).toString());
         Log.d("TAG", "favorite db res val : "+l );
         if(l == -1){

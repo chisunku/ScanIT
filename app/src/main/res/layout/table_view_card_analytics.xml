@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="25dp"
+    android:layout_marginLeft="25dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp">
+
+    <!--Text view to display R -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:id="@+id/storeName"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-light"
+        android:text="R"
+        android:textColor="@color/black"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:id="@+id/countT"
+        android:textAlignment="textEnd"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:fontFamily="sans-serif-light"
+        android:layout_alignParentRight="true"/>
+</RelativeLayout>

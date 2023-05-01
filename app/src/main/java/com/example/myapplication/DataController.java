@@ -78,13 +78,23 @@ public class DataController
         db.update("cart",content,"barcode=? and seller=?",new String[]{String.valueOf(barcode), seller});
         return 0;
     }
+
+    public boolean checkFav(String barcode){
+        db = dbHelper.getReadableDatabase();
+        Cursor c = db.rawQuery("select * from favorite where barcode='"+barcode+"'", null);
+        if(c!=null)
+            return true;
+        return false;
+    }
+
     public long insertCart(String barcode, String productName, String cost, int quantity, String seller, String url,
                            String imageUrl, String from){
         db = dbHelper.getWritableDatabase();
-//        db.execSQL("DROP TABLE IF EXISTS cart");
-//        db.execSQL("create table cart(barcode text not null, productName text not null," +
-//                "cost real not null, quantity integer not null, seller text not null, " +
-//                "url text not null, imageUrl text not null, Primary key(barcode, seller));");
+        //--- check if same product and same store is already in the cart ---
+//        Cursor cur = db.rawQuery("select * from cart where productName="+productName+" and seller="+seller,null);
+//        if(cur!=null){
+//
+//        }
         Log.d("TAG", "insert: coming here in insert db "+barcode);
         ContentValues content=new ContentValues();
         content.put("barcode", barcode);
@@ -95,12 +105,15 @@ public class DataController
         content.put("url", url);
         content.put("imageUrl",imageUrl);
         long res = 0;
-        Cursor c = db.rawQuery("select * from cart where barcode="+barcode, null);
+        Cursor c = db.rawQuery("select * from cart where productName='"+productName+"' and seller='"+seller+"'",null);
         if(c!=null && c.getCount()>0){
             c.moveToNext();
+            Log.d("TAG", "insertCart: quantioty before adding: "+c.getString(3));
             quantity = Integer.parseInt(c.getString(3).toString())+quantity;
+            Log.d("TAG", "insertCart: quantity after adding: "+quantity);
+            content.put("quantity", quantity);
             //db.rawQuery("update cart set quantity="+quantity+" where barcode="+barcode, null);
-            db.update("cart",content,"barcode=?",new String[]{barcode});
+            db.update("cart",content,"productName=? and seller=?",new String[]{productName, seller});
             c = db.rawQuery("select * from cart where barcode="+barcode, null);
             while(c.moveToNext()){
                 Log.d("TAG", "insertCart: "+c.getString(0)+" "+c.getString(1)+" "

@@ -189,7 +189,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.carthandler> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setMessage("Are you sure you want to delete "+model.getProductName()+" from the cart?");
                 builder.setTitle("DELETE");
-                builder.setCancelable(false);
+                builder.setCancelable(true);
                 builder.setPositiveButton("Yes", (dialog, which) -> {
                     DataController db = new DataController(context);
                     db.deleteCart(model.getBarcode(), model.getSeller());

@@ -1,9 +1,12 @@
 package com.example.myapplication;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
         import android.view.View;
         import android.view.ViewGroup;
@@ -75,18 +78,32 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.handler>
         holder.cart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("added to cart + "+model.getImageUrl());
-                Toast.makeText(context.getApplicationContext(), "adding to cart", Toast.LENGTH_LONG).show();
-//                DataController db = new DataController(context.getApplicationContext());
-                //qty;
-                int qty = Integer.parseInt(holder.quantity.getText().toString());
-                long r = db.insertCart(model.getBarcode(), model.getProductName(), model.getCost(), qty, model.getStoreName(), model.getUrl(), model.getImageUrl(), "product");
-                if(r == -1){
-                    Toast.makeText(context.getApplicationContext(), "Something went wrong :( please try again!!", Toast.LENGTH_LONG).show();
+                Log.d("TAG", "onClick: quntity while adding to cart"+model.getQuantity());
+                if(model.getQuantity() == 0){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage("Qualtity 0 cannot be added to cart");
+                    builder.setTitle("Error!!");
+                    builder.setCancelable(true);
+                    builder.setPositiveButton("Okay", (dialog, which) -> {
+                        dialog.cancel();
+                    });
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
                 }
-                dynamoDB ddb = new dynamoDB(context);
-                String storeName = model.getStoreName();
-                ddb.execute(storeName);
+                else {
+                    System.out.println("added to cart + " + model.getImageUrl());
+                    Toast.makeText(context.getApplicationContext(), "adding to cart", Toast.LENGTH_LONG).show();
+//                DataController db = new DataController(context.getApplicationContext());
+                    //qty;
+                    int qty = Integer.parseInt(holder.quantity.getText().toString());
+                    long r = db.insertCart(model.getBarcode(), model.getProductName(), model.getCost(), qty, model.getStoreName(), model.getUrl(), model.getImageUrl(), "product");
+                    if (r == -1) {
+                        Toast.makeText(context.getApplicationContext(), "Something went wrong :( please try again!!", Toast.LENGTH_LONG).show();
+                    }
+                    dynamoDB ddb = new dynamoDB(context);
+                    String storeName = model.getStoreName();
+                    ddb.addToDB(storeName);
+                }
             }
         });
         holder.clickableLayout.setOnClickListener(new View.OnClickListener() {

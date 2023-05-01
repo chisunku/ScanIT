@@ -1,13 +1,18 @@
 package com.example.myapplication;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -19,6 +24,10 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -29,48 +38,17 @@ import java.util.List;
 import java.util.Map;
 
 
-public class dynamoDB extends AsyncTask<String , Void, Void> {
+public class dynamoDB extends AsyncTask<Void , Void, HashMap<String, Object>> {
     Context ctx = null;
+
+    ProgressDialog progressDialog;
     String TAG = "firestore";
 //    AmazonDynamoDBClient client = new AmazonDynamoDBClient(new BasicAWSCredentials("AKIAZNFJQDK2IKAELOJQ", "UE9J4FPG6TSY/8nz721h5ISysdI+RI76XDIn/f29"));
     public dynamoDB(Context ctx){
         this.ctx = ctx;
     }
-    public void addItem(){
-        FirebaseApp.initializeApp(ctx);
-        //firebase
-//        FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        DatabaseReference myRef = database.getReference("mba");
-////        myRef.child("Walmart").setValue(1);
-//        myRef.orderByValue().addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                List<Map.Entry<String, Long>> list = new ArrayList<>();
-//                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
-//                    String storeName = childSnapshot.getKey();
-//                    Long count = (Long) childSnapshot.getValue();
-//                    Map.Entry<String, Long> entry = new AbstractMap.SimpleEntry<>(storeName, count);
-//                    list.add(entry);
-//                }
-//                Collections.sort(list, new Comparator<Map.Entry<String, Long>>() {
-//                    @Override
-//                    public int compare(Map.Entry<String, Long> o1, Map.Entry<String, Long> o2) {
-//                        return (int) (o2.getValue() - o1.getValue());
-//                    }
-//                });
-//                // Now the list contains the stores ordered by count
-//                System.out.println("list in FB : "+list);
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                Log.e("TAG", "Error reading stores", databaseError.toException());
-//            }
-//        });
-    }
 
-    @Override
-    protected Void doInBackground(String... vars) {
+    public void addToDB(String storeName){
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
                 .setPersistenceEnabled(false)
@@ -79,45 +57,11 @@ public class dynamoDB extends AsyncTask<String , Void, Void> {
         HashMap<String , Object> map = new HashMap<>();
         map.put("count", 1);
         Log.d(TAG, "doInBackground: in do in background ");
-
-        //---- adding document ----
-//        firebaseFirestore.collection("mba").document("walmart")
-//                .set(map)
-//                .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                    @Override
-//                    public void onSuccess(Void aVoid) {
-//                        Log.d(TAG, "Document added with ID: " + "walmart");
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        Log.w(TAG, "Error adding document", e);
-//                    }
-//                });
-
         CollectionReference mbaRef = firebaseFirestore.collection("mba");
-
-        //---- where clause -----
-//        mbaRef.whereEqualTo("storeName", "walmart")
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                        if (task.isSuccessful()) {
-//                            for (QueryDocumentSnapshot document : task.getResult()) {
-//                                Log.d("TAG", document.getId() + " => " + document.getData());
-//                            }
-//                        } else {
-//                            Log.d("TAG", "Error getting documents: ", task.getException());
-//                        }
-//                    }
-//                });
-
-        String storename = vars[0].toLowerCase();
+        String storename = storeName.toLowerCase();
         DocumentReference docRef = firebaseFirestore.collection("mba").document(storename);
 
-    // ---- Check if the document exists else add -----
+        // ---- Check if the document exists else add -----
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -164,42 +108,52 @@ public class dynamoDB extends AsyncTask<String , Void, Void> {
                 }
             }
         });
+    }
 
-//        DatabaseReference myRef = database.getReference("mba");
-//        Log.d("TAG", "doInBackground: in doinback dynamodb");
-//        myRef.equalTo("walmart").addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                // Get the result of the query
-//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-//                    // Process the result
-//                    Log.d("in walmart FB", "onDataChange: "+snapshot.getKey());
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                // Handle any errors
-//            }
-//        });
+    @Override
+    protected HashMap<String, Object> doInBackground(Void... vars) {
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        Log.d(TAG, "doInBackground: in do in background ");
+        CollectionReference collectionRef = firebaseFirestore.collection("mba");
+        HashMap<String, Object> map = new HashMap<>();
+        collectionRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        // Access the document data
+                        System.out.println("in do in back "+document.getId()+" "+document.getData().get("count"));
+                        map.put(document.getId(), document.getData().get("count"));
+                    }
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+        Log.d(TAG, "doInBackground: after doinback "+map);
+        return map;
+    }
 
-//        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                if (dataSnapshot.exists()) {
-//                    DataSnapshot oldValue = dataSnapshot.child(vars[0]);
-//                    if (oldValue != null) {
-//                        Long newValue = oldValue + 1;
-//                        myRef.setValue(newValue);
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                Log.e(TAG, "Error reading value", databaseError.toException());
-//            }
-//        });
-        return null;
+    protected void onPreExecute() {
+        super.onPreExecute();
+        progressDialog = ProgressDialog.show(ctx,
+                "ProgressDialog",
+                "Fetching data");
+    }
+
+    @Override
+    protected void onPostExecute(HashMap<String, Object> stringObjectHashMap) {
+        super.onPostExecute(stringObjectHashMap);
+        Log.d(TAG, "onPostExecute: dynamodb "+stringObjectHashMap);
+        Bundle bundle = new Bundle();
+        bundle.putString("analytics", String.valueOf(stringObjectHashMap));
+        Analytics ana = new Analytics();
+        ana.setArguments(bundle);
+        FragmentManager fragmentManager =  ((AppCompatActivity)ctx).getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.content, ana);
+        fragmentTransaction.addToBackStack("prod");
+        fragmentTransaction.commit();
+        progressDialog.dismiss();
     }
 }

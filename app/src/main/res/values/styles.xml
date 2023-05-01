@@ -1,15 +1,3 @@
-<!--<?xml version="1.0" encoding="utf-8"?>-->
-<!--<resources>-->
-<!--    <style name="Theme.MyApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">-->
-<!--        &lt;!&ndash; ... &ndash;&gt;-->
-<!--        <item name="colorSecondary">@color/white</item>-->
-<!--        <item name="colorOnSecondary">@color/grey</item>-->
-<!--        <item name="colorOnSurface">@color/black</item>-->
-<!--    </style>-->
-
-<!--</resources>-->
-
-
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.MyApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">

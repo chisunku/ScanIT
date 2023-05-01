@@ -78,7 +78,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.handle
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setMessage("Are you sure you want to remove "+model.getProductName()+" from the favorites?");
                 builder.setTitle("REMOVE");
-                builder.setCancelable(false);
+                builder.setCancelable(true);
                 builder.setPositiveButton("Yes", (dialog, which) -> {
                     DataController db = new DataController(context);
                     db.deleteFav(model.getBarcode());

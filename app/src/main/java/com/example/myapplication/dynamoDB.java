@@ -14,24 +14,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.mongodb.ConnectionString;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.client.MongoClients;
-
-import org.bson.Document;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -40,16 +27,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
-import io.realm.mongodb.App;
-import io.realm.mongodb.AppConfiguration;
-import io.realm.mongodb.Credentials;
-import io.realm.mongodb.User;
-import io.realm.mongodb.mongo.MongoClient;
-import io.realm.mongodb.mongo.MongoCollection;
-import io.realm.mongodb.mongo.MongoDatabase;
 
 
 public class dynamoDB extends AsyncTask<String , Void, Void> {
@@ -62,34 +39,34 @@ public class dynamoDB extends AsyncTask<String , Void, Void> {
     public void addItem(){
         FirebaseApp.initializeApp(ctx);
         //firebase
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("mba");
-//        myRef.child("Walmart").setValue(1);
-        myRef.orderByValue().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<Map.Entry<String, Long>> list = new ArrayList<>();
-                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
-                    String storeName = childSnapshot.getKey();
-                    Long count = (Long) childSnapshot.getValue();
-                    Map.Entry<String, Long> entry = new AbstractMap.SimpleEntry<>(storeName, count);
-                    list.add(entry);
-                }
-                Collections.sort(list, new Comparator<Map.Entry<String, Long>>() {
-                    @Override
-                    public int compare(Map.Entry<String, Long> o1, Map.Entry<String, Long> o2) {
-                        return (int) (o2.getValue() - o1.getValue());
-                    }
-                });
-                // Now the list contains the stores ordered by count
-                System.out.println("list in FB : "+list);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("TAG", "Error reading stores", databaseError.toException());
-            }
-        });
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference myRef = database.getReference("mba");
+////        myRef.child("Walmart").setValue(1);
+//        myRef.orderByValue().addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                List<Map.Entry<String, Long>> list = new ArrayList<>();
+//                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+//                    String storeName = childSnapshot.getKey();
+//                    Long count = (Long) childSnapshot.getValue();
+//                    Map.Entry<String, Long> entry = new AbstractMap.SimpleEntry<>(storeName, count);
+//                    list.add(entry);
+//                }
+//                Collections.sort(list, new Comparator<Map.Entry<String, Long>>() {
+//                    @Override
+//                    public int compare(Map.Entry<String, Long> o1, Map.Entry<String, Long> o2) {
+//                        return (int) (o2.getValue() - o1.getValue());
+//                    }
+//                });
+//                // Now the list contains the stores ordered by count
+//                System.out.println("list in FB : "+list);
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//                Log.e("TAG", "Error reading stores", databaseError.toException());
+//            }
+//        });
     }
 
     @Override
@@ -101,6 +78,7 @@ public class dynamoDB extends AsyncTask<String , Void, Void> {
         firebaseFirestore.setFirestoreSettings(settings);
         HashMap<String , Object> map = new HashMap<>();
         map.put("count", 1);
+        Log.d(TAG, "doInBackground: in do in background ");
 
         //---- adding document ----
 //        firebaseFirestore.collection("mba").document("walmart")

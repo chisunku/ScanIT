@@ -11,7 +11,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.journeyapps.barcodescanner.ScanContract;
@@ -41,7 +44,13 @@ public class HomeFragment extends Fragment {
         analytics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getContext(), )
+//                Intent i = new Intent(getContext(), )
+                Analytics analytics = new Analytics();
+                FragmentManager fragmentManager =  ((AppCompatActivity)getActivity()).getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.content, analytics);
+                fragmentTransaction.addToBackStack("prod");
+                fragmentTransaction.commit();
             }
         });
 

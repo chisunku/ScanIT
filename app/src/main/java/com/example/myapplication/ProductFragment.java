@@ -118,16 +118,9 @@ public class ProductFragment extends Fragment {
 //                img.setImageBitmap(bitmap);
 
                         JSONArray stores = product.getJSONArray("online_stores");
-                        Toast.makeText(getActivity().getApplicationContext(), "product online stores: "+stores.length(), Toast.LENGTH_SHORT).show();
+
                         int k = 0;
                         for (k = 0; k < stores.length(); k++) {
-//                    Log.d("TAG", "onCreate: " + stores.get(k).toString());
-//                    if (!stores.get(k).toString().contains("Walmart")) {
-//                        Log.d("TAG", "onCreate: Not available at Walmart");
-//                    } else {
-//                        val = k;
-//                        break;
-//                    }
                             JSONObject store = stores.getJSONObject(k);
                             if (store.get("price").toString().startsWith("$")) {
                                 String storeName = "";
@@ -165,7 +158,8 @@ public class ProductFragment extends Fragment {
 //                TextView cost = findViewById(R.id.cost);
 //                cost.setText(stores.getJSONObject(val).get("price").toString());
                 }
-
+                Toast.makeText(getActivity().getApplicationContext(), "product online stores: "+productModelArrayList.size(), Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "onCreateView: size: "+productModelArrayList.size());
 
                 ProductAdapter productAdapter = new ProductAdapter(getContext(), productModelArrayList);
 
@@ -179,6 +173,7 @@ public class ProductFragment extends Fragment {
 
                 //check if already in fav and change the bg
                 if(db.checkFav(barcode)){
+                    Log.d(TAG, "onCreateView: apparently yes??");
 //                    fav.setBackgroundColor(getResources().getColor(R.color.purple_200));
                     fav.setStrokeColor(ColorStateList.valueOf(getResources().getColor(R.color.purple_500)));
                     fav.setTextColor(ColorStateList.valueOf(getResources().getColor(R.color.purple_500)));

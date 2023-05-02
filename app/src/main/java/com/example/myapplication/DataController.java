@@ -82,7 +82,7 @@ public class DataController
     public boolean checkFav(String barcode){
         db = dbHelper.getReadableDatabase();
         Cursor c = db.rawQuery("select * from favorite where barcode='"+barcode+"'", null);
-        if(c!=null)
+        if(c.moveToNext())
             return true;
         return false;
     }

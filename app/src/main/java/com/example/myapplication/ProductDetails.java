@@ -98,9 +98,6 @@ public class ProductDetails extends AsyncTask<String, Void, String> {
         Log.d("ProductDetails.java", "onPostExecute: "+s);
         try {
             if(s.contains("\"results\":[]")){
-//                System.out.println(s);
-//                GoogleAPI api = new GoogleAPI(ctx);
-//                api.execute(barcode);
                 progressDialog.dismiss();
                 Toast.makeText(ctx, "Sorry this product was not found :(", Toast.LENGTH_SHORT).show();
                 return;

@@ -40,7 +40,7 @@
                         android:layout_height="194dp"
                         android:contentDescription="content_description_media"
                         android:scaleType="centerCrop"
-                        app:srcCompat="@drawable/ic_launcher_background" />
+                        app:srcCompat="@drawable/scan_9808" />
 
                     <LinearLayout
                         android:layout_width="match_parent"

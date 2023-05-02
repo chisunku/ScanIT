@@ -50,10 +50,10 @@ public class dynamoDB extends AsyncTask<Void , Void, HashMap<String, Object>> {
 
     public void addToDB(String storeName){
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-                .setPersistenceEnabled(false)
-                .build();
-        firebaseFirestore.setFirestoreSettings(settings);
+//        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+//                .setPersistenceEnabled(false)
+//                .build();
+//        firebaseFirestore.setFirestoreSettings(settings);
         HashMap<String , Object> map = new HashMap<>();
         map.put("count", 1);
         Log.d(TAG, "doInBackground: in do in background ");

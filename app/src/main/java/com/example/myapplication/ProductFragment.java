@@ -186,7 +186,10 @@ public class ProductFragment extends Fragment {
 //                        DataController db = new DataController(getContext());
                         long l = 0;
                         try {
-                            l = db.insertFav(barcode, product.get("title").toString(), images.get(0).toString());
+                            if(images == null || images.get(0) == null)
+                                l = db.insertFav(barcode, product.get("title").toString(), "https://images.saymedia-content.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cq_auto:eco%2Cw_1200/MTc0MTk2ODg3NDkzMDI3MzI0/how-to-upload-android-apps-for-free.gif");
+                            else
+                                l = db.insertFav(barcode, product.get("title").toString(), images.get(0).toString());
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }

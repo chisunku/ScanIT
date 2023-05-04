@@ -199,8 +199,10 @@ public class DataController
     }
 
     public Cursor retrieveTodoList(){
-        db = dbHelper.getReadableDatabase();
-        return db.query("list", new String[]{"checked", "task"},
+        SQLiteDatabase read = dbHelper.getReadableDatabase();
+        db = dbHelper.getWritableDatabase();
+        db.execSQL("create table if NOT EXISTS list(task text primary key, checked int);");
+        return read.query("list", new String[]{"checked", "task"},
                 null, null, null, null, null);
     }
 
@@ -238,6 +240,7 @@ public class DataController
                         "cost real not null, quantity integer not null, seller text not null, " +
                         "url text not null, imageUrl text not null, primary key (barcode, seller))");
 //                db.execSQL("create table if NOT EXISTS todoList(String task, int status, primary key(task))");
+                db.execSQL("create table if NOT EXISTS list(task text primary key, checked int);");
                 Log.d("TAG", "onCreate: after DB creation");
             }
             catch(SQLiteException e)
@@ -251,6 +254,7 @@ public class DataController
             // TODO Auto-generated method stub
             db.execSQL("DROP TABLE IF EXISTS favorite");
             db.execSQL("DROP TABLE IF EXISTS cart");
+            db.execSQL("drop table if exists list");
             onCreate(db);
         }
 

@@ -27,5 +27,11 @@
         android:icon="@drawable/cart"
         android:checked="false"
         app:showAsAction="always"/>
+    <item
+        android:id="@+id/notes"
+        android:title="List"
+        android:icon="@drawable/list"
+        android:checked="false"
+        app:showAsAction="always"/>
 </group>
 </menu>

@@ -178,6 +178,45 @@ public class DataController
                 "url", "imageUrl"}, null, null, null, null, null);
     }
 
+    public long insertTodo(String task, int status){
+        db = dbHelper.getWritableDatabase();
+//        db.execSQL("drop table list");
+        db.execSQL("create table if NOT EXISTS list(task text primary key, checked int);");
+        ContentValues content=new ContentValues();
+        content.put("task", task);
+        content.put("checked",status);
+        long res;
+        try {
+            res = db.insertOrThrow("list", null, content);
+        }catch (Exception e){
+            Log.e("TAG", "insert: error in db");
+            res = -1;
+            e.printStackTrace();
+        }finally {
+            db.close();
+        }
+        return res;
+    }
+
+    public Cursor retrieveTodoList(){
+        db = dbHelper.getReadableDatabase();
+        return db.query("list", new String[]{"checked", "task"},
+                null, null, null, null, null);
+    }
+
+    public void updateStatus(String task, int checked){
+        db = dbHelper.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("checked", checked);
+        db.update("list", cv, "task" + "= ?", new String[] {task});
+    }
+
+    public void deleteItem(String item){
+        db = dbHelper.getWritableDatabase();
+        db.delete("list","task=?",new String[]{item});
+        db.close();
+    }
+
     private static class DataBaseHelper extends SQLiteOpenHelper
     {
 
@@ -198,6 +237,7 @@ public class DataController
                 db.execSQL("create table if NOT EXISTS cart(barcode text not null, productName text not null," +
                         "cost real not null, quantity integer not null, seller text not null, " +
                         "url text not null, imageUrl text not null, primary key (barcode, seller))");
+//                db.execSQL("create table if NOT EXISTS todoList(String task, int status, primary key(task))");
                 Log.d("TAG", "onCreate: after DB creation");
             }
             catch(SQLiteException e)

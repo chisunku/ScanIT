@@ -91,6 +91,14 @@ public class MainActivity extends AppCompatActivity {
             fragmentTransaction1.commit();
             return true;
         }
+        else if (itemId == R.id.notes) {
+            NotesFragment fragment1 = new NotesFragment();
+            FragmentTransaction fragmentTransaction1 = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction1.replace(R.id.content, fragment1);
+            fragmentTransaction1.addToBackStack("notes");
+            fragmentTransaction1.commit();
+            return true;
+        }
         // It will help to replace the
         // one fragment to other.
 //        if (selectedFragment != null) {

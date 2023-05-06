@@ -10,30 +10,27 @@
         android:id="@+id/scanBtn"
         android:layout_width="518dp"
         android:layout_height="428dp"
-        android:layout_marginEnd="15dp"
-        android:layout_marginBottom="365dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="340dp"
         android:onClick="scanIT"
         android:src="@drawable/semi_circle"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/forAnalytics"
         android:layout_width="323dp"
         android:layout_height="384dp"
-        android:layout_marginStart="162dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="155dp"
         android:src="@drawable/semi_circle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scanBtn" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scanBtn"  />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="95dp"
-        android:layout_marginEnd="196dp"
-        android:layout_marginBottom="400dp"
         android:foregroundGravity="center"
         android:gravity="center"
         android:text="CLICK TO SCAN"
@@ -41,22 +38,38 @@
         android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.775"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.244" />
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="141dp"
         android:layout_height="55dp"
-        android:layout_marginStart="240dp"
-        android:layout_marginTop="192dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="204dp"
+        android:gravity="center"
         android:src="@drawable/semi_circle"
         android:text="ANALYTICS"
-        android:gravity="center"
-        android:textSize="20dp"
         android:textColor="@color/white"
+        android:textSize="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/scanBtn" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:baselineAlignBottom="true"
+        android:contentDescription="add"
+        app:backgroundTint="@color/purple_200"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/robot" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

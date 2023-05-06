@@ -33,7 +33,7 @@ public class FavoriteFragment extends Fragment {
         ArrayList<FavoriteModel> favslist = new ArrayList<>();
         try {
             while(favs.moveToNext()){
-                Log.d("TAG", "onCreate: favs from db"+favs.getString(1) +" "+ favs.getString(2)+" "+ favs.getString(0) );
+//                Log.d("TAG", "onCreate: favs from db"+favs.getString(1) +" "+ favs.getString(2)+" "+ favs.getString(0) );
                 fv = new FavoriteModel(favs.getString(1) , favs.getString(2), favs.getString(0));
                 favslist.add(fv);
             }

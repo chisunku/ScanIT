@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
 
-import org.checkerframework.checker.units.qual.A;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -27,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class chatGPT extends AsyncTask<String, String, String> {
+public class searchChatGPT extends AsyncTask<String, String, String> {
 
     View v;
     Activity a;
@@ -36,11 +35,11 @@ public class chatGPT extends AsyncTask<String, String, String> {
     String TAG = "chatGPT";
     ProgressBar progressBar;
 
-    public chatGPT(View ctx, Activity a, Context c){
+    public searchChatGPT(View ctx, Activity a, Context c){
         this.v = ctx;
         this.a = a;
         context = c;
-        progressBar = v.findViewById(R.id.progressBar);
+        progressBar = v.findViewById(R.id.searchPB);
     }
 
     @Override
@@ -86,12 +85,10 @@ public class chatGPT extends AsyncTask<String, String, String> {
         return response;
     }
 
-
-
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        CardView search = v.findViewById(R.id.details);
+        CardView search = v.findViewById(R.id.searchcard);
         search.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE);
     }
@@ -100,29 +97,26 @@ public class chatGPT extends AsyncTask<String, String, String> {
     protected void onPostExecute(String s) {
         progressBar.setVisibility(View.GONE);
         super.onPostExecute(s);
-        DataController db = new DataController(context);
         Log.d("TAG", "postExecute: "+s);
+        DataController db = new DataController(context);
 //        Log.d(TAG, "onCreateView: response : " + res);
         try {
             JSONObject json = new JSONObject(s);
             String response = json.getJSONArray("choices").getJSONObject(0).get("text").toString();
             Log.d(TAG, "onCreateView: answer : " + response);
-            ListView lv = v.findViewById(R.id.list);
+            ListView lv = v.findViewById(R.id.searchresult);
             List<String> listArr = Arrays.asList(response.split("\\n"));
             ArrayList<String> arr = new ArrayList<>(listArr);
             if(arr.size()>2) {
                 arr.remove(0);
 //                arr.remove(1);
             }
-
             for (int i = 0; i < arr.size(); i++) {
                 if(arr.get(i).length()<1)
                     arr.remove(i);
-                else
-                    break;
                 Log.d(TAG, "onCreateView: list has : " + arr.get(i));
             }
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, arr);
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_activated_1, arr);
             lv.setAdapter(adapter);
             int totalHeight = 0;
             for (int i = 0; i < adapter.getCount(); i++) {
@@ -133,7 +127,6 @@ public class chatGPT extends AsyncTask<String, String, String> {
             Log.d(TAG, "onPostExecute: height "+totalHeight );
             ViewGroup.LayoutParams params = lv.getLayoutParams();
             params.height = totalHeight + (lv.getDividerHeight() * adapter.getCount()) + 100;
-            lv.setLayoutParams(params);
             adapter.notifyDataSetChanged();
             lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override

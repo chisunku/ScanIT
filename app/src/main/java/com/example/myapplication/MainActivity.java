@@ -12,6 +12,7 @@ import com.google.firebase.FirebaseApp;
 
 public class MainActivity extends AppCompatActivity {
     Button scan;
+    BottomNavigationView navigationView = null;
     //    ProgressBar pb = findViewById(R.id.progressBar_cyclic);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,46 +20,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         FirebaseApp.initializeApp(this);
-//        //firebase
-//        FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        DatabaseReference myRef = database.getReference("analytics");
-//        myRef.child("message").setValue("Hello, World!");
-//        myRef.child("message").addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                String message = dataSnapshot.getValue(String.class);
-//                Log.d("in firebase main", "Value is: " + message);
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError error) {
-//                Log.w("in firebase main", "Failed to read value.", error.toException());
-//            }
-//        });
-
-
-//        Realm.init(this);
-//        RealmApp realmApp = new RealmApp.Builder()
-//                .build("scanit-oebpn");
-//        App app = new App(new AppConfiguration.Builder("scanit-oebpn").build());
-////        User user = app.loginAsync(Credentials.Anonymous()).get();
-//        User user = app.login(Credentials.anonymous());
-////mongodb+srv://root:<password>@cluster0.eob7rat.mongodb.net/?retryWrites=true&w=majority
-//        MongoClient client = user.getMongoClient("mongodb+srv://root:root@cluster0.eob7rat.mongodb.net/?retryWrites=true&w=majority");
-//        MongoDatabase db = client.getDatabase("ScanIT");
-//        MongoCollection<Document> collection = db.getCollection("mba");
-//        HashMap<String, Object> map = new HashMap<>();
-//        map.put("productTitle","coke");
-//        map.put("websitesClicked","amazon, target");
-//        map.put("addedToFav", "yes");
-//        map.put("cartStores","target");
-//        collection.insertOne(new Document(map));
-//        mongo
-//        dynamoDB mongo = new dynamoDB();
-//        mongo.execute();
-//        getSupportActionBar().setDisplayShowTitleEnabled(false);
-//        scan = findViewById(R.id.scanBtn);
-        BottomNavigationView navigationView = findViewById(R.id.bottom_navigation);
+        navigationView = findViewById(R.id.bottom_navigation);
         navigationView.setOnNavigationItemSelectedListener(navListener);
         HomeFragment fragment = new HomeFragment();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -66,8 +28,19 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
 
     }
+
+//    @Override
+//    public void onBackPressed() {
+//        int selectedItemId = navigationView.getSelectedItemId();
+////        if (R.id.home != selectedItemId) {
+////            // Set the selected item to the home menu item
+//            navigationView.setSelectedItemId(selectedItemId);
+////        } else {
+//            super.onBackPressed();
+////        }
+//    }
+
     private final BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
-        Fragment selectedFragment = null;
         int itemId = item.getItemId();
         if(itemId == R.id.home){
             HomeFragment fragment = new HomeFragment();

@@ -28,6 +28,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -133,6 +134,19 @@ public class HomeFragment extends Fragment {
 //                dynamoDB dbb = new dynamoDB(getActivity());
 //                dbb.execute();
 
+            }
+        });
+
+        FloatingActionButton btn = view.findViewById(R.id.bot);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BotFragment bot = new BotFragment();
+                FragmentManager fragmentManager =  ((AppCompatActivity)getActivity()).getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.content, bot);
+                fragmentTransaction.addToBackStack("prod");
+                fragmentTransaction.commit();
             }
         });
 

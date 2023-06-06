@@ -11,7 +11,9 @@ and Rapid API to fetch a list of retail locations.
 
 ## Steps to run the application
 1. clone the repo
-``` git clone https://github.com/chisunku/ScanIT.git ```
+``` 
+git clone https://github.com/chisunku/ScanIT.git
+```
 2. Open the project on Android studio
 3. Run the application on any desired device 
 

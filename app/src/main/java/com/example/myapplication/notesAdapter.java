@@ -58,10 +58,12 @@ public class notesAdapter extends RecyclerView.Adapter<notesAdapter.notesHandler
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    Log.d("TAG", "onCheckedChanged: coming here in checked");
                     db.updateStatus(model.getTask(), 1);
                 } else {
                     db.updateStatus(model.getTask(), 0);
                 }
+//                notifyDataSetChanged();
             }
         });
         holder.layout.setOnClickListener(new View.OnClickListener() {

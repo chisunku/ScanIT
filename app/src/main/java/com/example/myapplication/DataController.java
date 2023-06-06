@@ -198,6 +198,14 @@ public class DataController
         return res;
     }
 
+    public void updateTodo(String task, int checked){
+        db = dbHelper.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("task", task);
+        cv.put("checked", checked);
+        db.update("list", cv, "task" + "= ?", new String[] {task});
+    }
+
     public Cursor retrieveTodoList(){
         SQLiteDatabase read = dbHelper.getReadableDatabase();
         db = dbHelper.getWritableDatabase();
@@ -209,8 +217,10 @@ public class DataController
     public void updateStatus(String task, int checked){
         db = dbHelper.getWritableDatabase();
         ContentValues cv = new ContentValues();
+        cv.put("task", task);
         cv.put("checked", checked);
-        db.update("list", cv, "task" + "= ?", new String[] {task});
+        long res = db.update("list", cv, "task" + "= ?", new String[] {task});
+        Log.e("TAG", "updateStatus: response : "+res );
     }
 
     public void deleteItem(String item){

@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -139,7 +140,9 @@ public class NotesFragment extends Fragment {
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        db.insertTodo(input.getText().toString(), 0);
+                        Log.d("TAG", "onClick: checked before editing: "+todo.get(viewHolder.getAdapterPosition()).checked+" "+
+                                todo.get(viewHolder.getAdapterPosition()).task+" "+input.getText());
+                        db.updateStatus(input.getText().toString(), todo.get(viewHolder.getAdapterPosition()).checked);
                         todo.set(viewHolder.getAdapterPosition(), new NotesModel(input.getText().toString(), 0));
                         System.out.println("notes array size : "+todo.size());
                         notes.setItems(todo);

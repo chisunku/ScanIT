@@ -48,24 +48,20 @@ public class chatGPT extends AsyncTask<String, String, String> {
         String response = "";
         Log.d("TAG", "doInBackground: in do in back");
         try{
-
             URL url = new URL("https://api.openai.com/v1/completions");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("Authorization", "Bearer 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");
+            connection.setRequestProperty("Authorization", "Bearer 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");
             connection.setRequestMethod("POST");
-
             JSONObject requestBody = new JSONObject();
             requestBody.put("model", "text-davinci-003");
             requestBody.put("prompt", strings[0]);
             requestBody.put("temperature", 0.7);
             requestBody.put("max_tokens", 256);
-
             OutputStream outputStream = connection.getOutputStream();
             byte[] requestBodyBytes = requestBody.toString().getBytes("utf-8");
             outputStream.write(requestBodyBytes, 0, requestBodyBytes.length);
             outputStream.close();
-
             InputStream inputStream = connection.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             StringBuilder responseBuilder = new StringBuilder();
@@ -112,9 +108,7 @@ public class chatGPT extends AsyncTask<String, String, String> {
             ArrayList<String> arr = new ArrayList<>(listArr);
             if(arr.size()>2) {
                 arr.remove(0);
-//                arr.remove(1);
             }
-
             for (int i = 0; i < arr.size(); i++) {
                 if(arr.get(i).length()<1)
                     arr.remove(i);

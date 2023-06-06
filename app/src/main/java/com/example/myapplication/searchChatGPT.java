@@ -51,12 +51,12 @@ public class searchChatGPT extends AsyncTask<String, String, String> {
             URL url = new URL("https://api.openai.com/v1/completions");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("Authorization", "Bearer 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");
+            connection.setRequestProperty("Authorization", "Bearer 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");
             connection.setRequestMethod("POST");
 
             JSONObject requestBody = new JSONObject();
             requestBody.put("model", "text-davinci-003");
-            requestBody.put("prompt", strings[0]);
+            requestBody.put("prompt", "give me a list of 7 products for" + strings[0]);
             requestBody.put("temperature", 0.7);
             requestBody.put("max_tokens", 256);
 

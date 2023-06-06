@@ -58,16 +58,10 @@ public class ProductDetails extends AsyncTask<String, Void, String> {
             connection.setRequestProperty("X-RapidAPI-Key","107297c8c4msh813718b79ab95abp135b6djsn549defa91b08");
             connection.setRequestProperty("X-RapidAPI-Host", "barcodes1.p.rapidapi.com");
             connection.setRequestMethod("GET");
-            // Log the server response code
             int responseCode = connection.getResponseCode();
             Log.i("TAG", "Server responded with: " + responseCode);
-
-            // And if the code was HTTP_OK then parse the contents
             if (responseCode == HttpURLConnection.HTTP_OK) {
-
-                // Convert request content to string
                 InputStream is = connection.getInputStream();
-//                String content = convertInputStream(is, "UTF-8");
                 BufferedReader in = new BufferedReader(new InputStreamReader(is));
                 String inputLine;
                 while ((inputLine = in.readLine()) != null) {
@@ -75,8 +69,6 @@ public class ProductDetails extends AsyncTask<String, Void, String> {
                 }
                 in.close();
                 is.close();
-
-//                return inputLine;
             }
 
 

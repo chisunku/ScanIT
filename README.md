@@ -25,4 +25,5 @@ git clone https://github.com/chisunku/ScanIT.git
 ## Links
 - [APK file](https://drive.google.com/file/d/18dZ-_-iHUHf0VNwRmpuqtwVX_waflk1P/view?usp=sharing)
 - [Application demo](https://drive.google.com/file/d/16uRMixgQMfEH7TcqciIuA1TYzvFLiTOj/view?usp=sharing)
+- [Report](https://docs.google.com/document/d/1-Q9lEnJZZFslDAOVpQwkIbY3R9Szmcf-l7KSQhKApQM/edit#heading=h.ozwp57sj1cl6)
 
